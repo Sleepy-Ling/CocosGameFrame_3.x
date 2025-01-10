@@ -24,8 +24,7 @@ export default class GameController extends ControllerBase {
         }
 
         GM.gamingTimerManager.update(deltaTime);
-
-
+        
         return true;
     }
 

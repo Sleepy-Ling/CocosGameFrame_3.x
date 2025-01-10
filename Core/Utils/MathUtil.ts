@@ -1,6 +1,9 @@
 import { Graphics, Quat, quat, v2, v3, Vec2, Vec3 } from "cc";
 
 class _MathUtil {
+    tempV3 = v3();
+    tempV2 = v2();
+
     toAngle(radian: number) {
         return 180 / Math.PI * radian;
     }
@@ -67,7 +70,12 @@ class _MathUtil {
         return result;
     }
 
-    /**获取反射角 */
+    /**
+     * 获取反射角
+     * @param v1 入射向量
+     * @param nVec 法向量
+     * @returns 
+     */
     public getReflectVec(v1: Vec2, nVec: Vec2) {
         let v1Normalize = v2(v1).normalize();
         let nVecNormalize = v2(nVec).normalize();

@@ -1,17 +1,16 @@
-import { find, Font, instantiate, Label, Node, Prefab, UITransform, v2, v3, Vec3 } from "cc"
+import { find, instantiate, Label, Node, Prefab, UITransform, v3, Vec3 } from "cc"
 import { GM } from "../Global/GM"
 import { ObjectPool } from "../ObjectPool/ObjectPool"
 import PopUpItemBase, { PopUpItemBaseParam } from "../PopUp/PopUpItemBase"
-import { Util } from "../Utils/Util"
 import { ViewBase, ViewParamBase, ViewTranstionParam } from "../View/ViewBase"
-import { GAME_VERSION, IS_DEBUG, IS_LOG_MOUSE_DETAIL, VIEW_DIR } from "../../Def/ConstDef"
-import { UIName, Enum_AssetBundle, Enum_Layer, Enum_GameObject, Enum_EventType } from "../../Def/EnumDef"
+import { GAME_VERSION, IS_DEBUG, VIEW_DIR } from "../../Def/ConstDef"
+import { UIName, Enum_AssetBundle, Enum_Layer, Enum_EventType } from "../../Def/EnumDef"
 import { CustomEvents } from "../../Event/CustomEvents"
 import { ResourcesManager } from "./ResourcesManager"
 
 
 export class ViewData {
-    modName: UIName;
+    modName: UIName
     node: Node;
     show: boolean;
     load: boolean;

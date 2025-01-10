@@ -1,6 +1,5 @@
 import { Button, Component, EventTouch, Label, Node, RichText, TTFFont, Vec2, _decorator } from 'cc';
 import { AudioName, Enum_AssetBundle, Enum_Language, Enum_Orientation } from '../../Def/EnumDef';
-import { SDKManager } from '../../SDK/SDKManager';
 
 import { GM } from '../Global/GM';
 
@@ -26,9 +25,6 @@ export class ViewParamBase {
 @ccclass()
 @menu("View/ViewBase")
 export class ViewBase extends Component implements IViewBase {
-    @property(Node)
-    protected icon_AdList: Node[] = [];
-
     /**首次应用字体 */
     protected firstApplyFont: boolean = true;
 
@@ -36,11 +32,6 @@ export class ViewBase extends Component implements IViewBase {
     start(): void {
 
     }
-
-    /**当前是否为有广告的ui界面 */
-    @property({ tooltip: "值为true时，在界面打开或关闭，会调用广告页面参数" })
-    private isPageCallAd: boolean = false;
-
     /**首次初始化界面
      * (注意：该方法只会在加载后执行一次,可以把ui绑定写在此处)
      */
@@ -77,10 +68,6 @@ export class ViewBase extends Component implements IViewBase {
             param.openCallBack();
         }
 
-        if (this.isPageCallAd) {
-            SDKManager.showAd(this.node.name + "OpenAd");
-        }
-
         // if (IS_LOG_TOUCH_DETAIL) {
         //     this.node.on(Node.EventType.TOUCH_END, this.onTouchView, this);
         // }
@@ -91,11 +78,6 @@ export class ViewBase extends Component implements IViewBase {
         if (this.viewParam && this.viewParam.closeCallBack) {
             this.viewParam.closeCallBack(param);
         }
-
-        if (this.isPageCallAd) {
-            SDKManager.showAd(this.node.name + "CloseAd");
-        }
-
 
         // if (IS_LOG_TOUCH_DETAIL) {
         //     this.node.off(Node.EventType.TOUCH_END, this.onTouchView, this);

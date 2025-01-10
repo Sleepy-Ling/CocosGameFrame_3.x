@@ -77,24 +77,12 @@ class resourcesManager extends ManagerBase {
     }
 
     /**直接获取已经加载的资源 */
-    public syncLoadAssetRes<T extends Asset>(BundleName: Enum_AssetBundle | string, path: string): T {
+    public getAssetRes<T extends Asset>(BundleName: Enum_AssetBundle | string, path: string): T {
         // if (this.ResData[BundleName][path]) {
         //     return this.ResData[BundleName][path];
         // }
 
         return this.getAssetBundle(BundleName).get(path);
-
-        return null;
-    }
-
-    /**直接获取已经加载的资源 */
-    public syncLoadAssetRes2<T extends Asset>(BundleName: Enum_AssetBundle | string, path: string): T {
-        // if (this.ResData[BundleName][path]) {
-        //     return this.ResData[BundleName][path];
-        // }
-
-        let ab = this.getAssetBundle(BundleName);
-        return ab.get(path);
 
         return null;
     }
@@ -186,6 +174,37 @@ class resourcesManager extends ManagerBase {
             }
 
         })
+    }
+
+    public async LoadAllAssetInBundle(BundleName: Enum_AssetBundle | string): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            let bundle = await this.LoadAssetBundle(BundleName);
+
+            const assetInf = bundle["_config"]["paths"]["_map"];
+            let allPromise: Promise<Asset>[] = [];
+            for (const key in assetInf) {
+                // assetNameList.push({ bundle: element, name: key });
+                let p = this.LoadAssetRes(BundleName, key);
+                allPromise.push(p);
+            }
+
+            await Promise.all(allPromise);
+
+            resolve(true);
+        });
+    }
+
+    /**加载指定分包内的目录资源 */
+    public async LoadDirInBundle(bundleName: Enum_AssetBundle | string, dirName: string): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            let bundle = await this.LoadAssetBundle(bundleName);
+
+            bundle.loadDir(dirName, (err: Error, data: Asset[]) => {
+                log("LoadDirInBundle",bundleName, data)
+                resolve(true);
+            });
+
+        });
     }
 
     /**获取已加载的分包 */

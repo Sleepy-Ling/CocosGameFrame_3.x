@@ -11,14 +11,14 @@ import TimerManager from "../Manager/TimerManager";
 import ToastManager from "../Manager/ToastManager";
 import { TutorialManager } from "../Manager/TutorialManager";
 import UIManager from "../Manager/UIManager";
-import { WX_AudioManager } from "../Manager/WX_AudioManager";
 import Ad_Manager from "../Manager/Ad_Manager";
-import { Camera, Node } from "cc";
-import GameController from "../../Controller/GameController";
+import { Camera, Graphics, Node } from "cc";
 import ControllerBase from "../../Controller/ControllerBase";
 import { ResourcesManager } from "../Manager/ResourcesManager";
 import { Enum_AssetBundle } from "../../Def/EnumDef";
 import { RedDotSystem } from "../RedDot/RedDotSystem";
+import { IGameLogic } from "./IGameLogic";
+import { CollisionManager } from "../Manager/CollisionManager";
 
 /**游戏主管 GameMaster */
 export namespace GM {
@@ -51,8 +51,8 @@ export namespace GM {
     export const gamingTimerManager: TimerManager = new TimerManager();
     /**广告相关的管理者 */
     export const ad_Manager = new Ad_Manager();
-    /**主游戏控制器 */
-    export const gameController: Readonly<GameController> = new GameController();
+
+    export const colliderManager = new CollisionManager();
 
     export interface IInitParam {
         audioSourceRoot: Node;
@@ -63,6 +63,7 @@ export namespace GM {
         forwardCamera: Camera;
         /**当前时间戳 */
         now: number;
+        graphics: Graphics,
     }
 
     /**初始化 */
@@ -80,22 +81,18 @@ export namespace GM {
         gamingTimerManager.init();
         ad_Manager.init();
         toastManager.init();
+        colliderManager.init(p.graphics);
         //初始化红点系统
         // const redDotSf = await ResourcesManager.LoadSpriteFrameFromAtlas(Enum_AssetBundle.Icon, null, "RedDot");
         // RedDotSystem.init(redDotSf);
 
-        gameController.init(p.root_3d, 0);
+        // gameController.init(p.root_3d, 0);
 
         return Promise.resolve(true);
     }
 
     /**初始化音频管理者 */
     function initAudioManager(): AudioManagerBase {
-        let wx = window["wx"];
-        if (wx) {
-            return new WX_AudioManager();
-        }
-
         return new AudioManager();
     }
 }

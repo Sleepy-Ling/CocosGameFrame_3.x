@@ -1,6 +1,7 @@
 
 import { Vec2 } from "cc";
 import { MathUtil } from "./MathUtil";
+import { IStats } from "../../../Def/StructDef";
 
 class _CalcUtil {
     /**解析 cc.Component.EventHandler emit 参数 */
@@ -45,6 +46,11 @@ class _CalcUtil {
         }
 
         return id_list[id_list.length - 1];
+    }
+
+    /**计算出最终数值 */
+    public calcFinalStatsVal(s: IStats) {
+        return s.base * (1 + s.bonusRate) + s.bonusVal;
     }
 }
 export const CalcUtil = new _CalcUtil();

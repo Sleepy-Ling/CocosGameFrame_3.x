@@ -1,7 +1,7 @@
 
 
 
-import { _decorator, Canvas, Vec2 } from 'cc';
+import { _decorator, Canvas, Game, MathBase, Vec2 } from 'cc';
 import { Enum_GameState, Enum_GameObject } from '../../Def/EnumDef';
 import { GameObjectsManagerBase } from '../Manager/GameObjectsManagerBase';
 
@@ -18,7 +18,6 @@ export class GameViewInitParam extends ViewParamBase {
 }
 
 export class GameViewInf {
-    public levelID: number;
 }
 
 const { ccclass, property } = _decorator;
@@ -95,9 +94,27 @@ export default abstract class GameViewBase extends ViewBase {
         }
     }
 
+    public GetAllGameObjects() {
+        let result: GameObjectBase[] = [];
+        let itor = this.GameObjectsManagers.values();
+
+        let next = itor.next();
+
+        while (!next.done) {
+            let managerBase: GameObjectsManagerBase = next.value;
+            if (managerBase == null) {
+                continue;
+            }
+
+            result.push(...managerBase.GetAllGameObjects());
+
+            next = itor.next();
+        }
+
+        return result;
+    }
+
     public AddObjectIntoManager(obj: GameObjectBase, param?: GameObjectBaseInitParam) {
-
-
         let manager = this.GetManager(obj.type);
         manager.AddGameObjectIntoTable(obj, param);
 
@@ -116,7 +133,7 @@ export default abstract class GameViewBase extends ViewBase {
 
     public abstract getGameInf(): Readonly<GameViewInf>;
 
-    public abstract getGameObjectCfg(id: string): Readonly<Object>;
+    // public abstract getGameObjectCfg(id: string): Readonly<Object>;
 
     public getGameObjectByUUID(uuid: string, type?: Enum_GameObject) {
         if (type) {
@@ -132,6 +149,19 @@ export default abstract class GameViewBase extends ViewBase {
             if (obj) {
                 return obj;
             }
+
+            next = itor.next();
+        }
+    }
+
+    /**更新全部对象管理器 */
+    public updateAllGameObjectsManager(deltaTime: number) {
+        let itor = this.GameObjectsManagers.values();
+
+        let next = itor.next();
+        while (!next.done) {
+            let managerBase: GameObjectsManagerBase = next.value;
+            managerBase.updateAllObjects(deltaTime);
 
             next = itor.next();
         }

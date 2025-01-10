@@ -4,9 +4,6 @@ import { ObjectPool } from "../ObjectPool/ObjectPool";
 import { LogUtil } from "../Utils/LogUtil";
 import ManagerBase from "./ManagerBase";
 
-const { ccclass, property } = cc._decorator;
-
-@ccclass()
 export class GameObjectsManagerBase extends ManagerBase {
     /**当前游戏场景里面的对象 用于统一控制 */
     protected GameObjectsTable = new Map<String, GameObjectBase>();
@@ -18,19 +15,20 @@ export class GameObjectsManagerBase extends ManagerBase {
     }
 
     /**把游戏对象加入表里 */
-    public AddGameObjectIntoTable(gameObjectBase: GameObjectBase, startInf: GameObjectBaseInitParam = null) {
-        let id = gameObjectBase.getUUID();
+    public AddGameObjectIntoTable(gameObjectBase: GameObjectBase, initInf: GameObjectBaseInitParam = null) {
+        let id = gameObjectBase.getUUID() || initInf.uuid;
+        if (id == null) {
+            LogUtil.Log("添加对象的uuid 为空!!");
+            return;
+        }
+
         if (this.GameObjectsTable.has(id)) {
-            LogUtil.Log("重复添加对象 " + id, gameObjectBase.name);
+            LogUtil.Log("重复添加对象 " + id, gameObjectBase);
             return;
         }
         this.GameObjectsTable.set(id, gameObjectBase);
 
-        // gameObjectBase.init(startInf);
-
-        if (startInf) {
-            gameObjectBase.onJoinScene(startInf);
-        }
+        gameObjectBase.init(initInf);
     }
 
     /**
@@ -39,17 +37,14 @@ export class GameObjectsManagerBase extends ManagerBase {
      * @returns 
      */
     public RemoveGameObjectFromTable(gameObjectBase: GameObjectBase) {
-        if (gameObjectBase.node == null || !gameObjectBase.node.isValid) {
-            return;
-        }
-
-        let id = gameObjectBase.node.uuid;
+        let id = gameObjectBase.getUUID();
         if (!this.GameObjectsTable.has(id)) {
             return;
         }
 
         this.GameObjectsTable.delete(id);
-        gameObjectBase.recover();
+        // gameObjectBase.recover();
+        ObjectPool.put(gameObjectBase.recoverTag, gameObjectBase);
     }
 
     /**
@@ -58,7 +53,8 @@ export class GameObjectsManagerBase extends ManagerBase {
     public RemoveAllGameObjects() {
         let allObjects = this.GetAllGameObjects();
         allObjects.forEach((obj) => {
-            obj.recover();
+            // obj.recover();
+            ObjectPool.put(obj.recoverTag, obj);
         })
 
         this.GameObjectsTable.clear();
@@ -86,14 +82,12 @@ export class GameObjectsManagerBase extends ManagerBase {
     public pauseAllGameObjects() {
         this.GetAllGameObjects().forEach((obj) => {
             obj.onGamePause();
-            obj.enabled = false;
         })
     }
 
     public resumeAllGameObjects() {
         this.GetAllGameObjects().forEach((obj) => {
             obj.onGameResume();
-            obj.enabled = true;
         })
     }
 

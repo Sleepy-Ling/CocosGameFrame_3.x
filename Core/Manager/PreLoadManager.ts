@@ -1,4 +1,4 @@
-import { __private, AssetManager, assetManager, createDefaultPipeline, JsonAsset, log } from "cc";
+import { __private, Asset, AssetManager, assetManager, createDefaultPipeline, JsonAsset, log } from "cc";
 import { VIEW_DIR } from "../../Def/ConstDef";
 import { Enum_AssetBundle, Enum_Layer, UIName } from "../../Def/EnumDef";
 import { CustomEvents } from "../../Event/CustomEvents";
@@ -23,6 +23,7 @@ export default class PreLoadManager extends ManagerBase {
 
     private _PreloadBundle: Enum_AssetBundle[] = [
         Enum_AssetBundle.Common,
+        Enum_AssetBundle.Config,
     ]
 
     private _preloadView: Array<{ bundle: Enum_AssetBundle, viewName: UIName }> = [

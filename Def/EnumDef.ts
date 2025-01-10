@@ -40,11 +40,8 @@ export enum Enum_AssetBundle {
     /**音频 */
     Audio = "Audio",
     PopUpToast = "PopUpToast",
-    Road = "Road",
-    Character = "Character",
-    Effect = "Effect",
     Icon = "Icon",
-
+    Game = "Game",
     Config = "Config",
 }
 
@@ -61,7 +58,7 @@ export enum AudioName {
     None = "",
 
     BGM = "shape shift BG",
-    ClickBtn = "UI_Back",
+    ClickBtn = "",
     SwitchViewFinish = "",
 
     /**人物走路声音 */
@@ -104,10 +101,13 @@ export enum AtlasType {
 
 
 export enum UIName {
+    //root 层
+    MainGameView,
+
     //ui层
     TestView,
     TestView2,
-    GameView,
+    MainGameHUDView,
     SkinView,
     SkinRewardView,
     NewPlayerView,
@@ -116,6 +116,7 @@ export enum UIName {
     RandomSkinView,
     SettingView,
     DebugView,
+    ColliderTestView,
     //pop 层
 
     //loading层
@@ -176,7 +177,8 @@ export enum Enum_Layer {
 }
 
 export enum Enum_GameObject {
-
+    Tower,
+    Monster,
 }
 
 export enum Enum_VibrateType {
@@ -251,19 +253,19 @@ export enum Enum_ConveyanceState {
     Fall,
 }
 
-/**碰撞盒分组 */
-export enum Enum_ColliderGroup {
-    Default,
-    Ground = 1 << 1,
-    ClimbWall = 1 << 2,
-    Player = 1 << 3,
-    ClimbWallEnd = 1 << 4,
-    FinishLine = 1 << 5,
-    Rocket = 1 << 6,
-    Obstacle = 1 << 7,
-    All = 1 << 8,
-    Water = 1 << 9,
-}
+// /**碰撞盒分组 */
+// export enum Enum_ColliderGroup {
+//     Default,
+//     Ground = 1 << 1,
+//     ClimbWall = 1 << 2,
+//     Player = 1 << 3,
+//     ClimbWallEnd = 1 << 4,
+//     FinishLine = 1 << 5,
+//     Rocket = 1 << 6,
+//     Obstacle = 1 << 7,
+//     All = 1 << 8,
+//     Water = 1 << 9,
+// }
 
 /**障碍物类型 */
 export const Enum_ObstacleType = Enum({
