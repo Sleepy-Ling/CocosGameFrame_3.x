@@ -3,7 +3,8 @@ import { _decorator, Component } from "cc";
 import { Enum_GameObject } from "../../Def/EnumDef";
 
 import IRecoverObject from "./IRecoverObject";
-import { IColliderInf, IColliderObject } from "../../../Def/StructDef";
+import { IColliderBase, IColliderInf, IColliderObject } from "../../Def/StructDef";
+import { ICard, ICharacterFactor } from "../../../Def/StructDef";
 const { ccclass, property } = _decorator;
 
 /**游戏基类接口（重写必要的接口） */
@@ -24,14 +25,15 @@ export class GameObjectBaseInitParam {
 /**游戏对象类 */
 @ccclass()
 export default class GameObjectBase extends Component implements IRecoverObject, IColliderObject {
+    needInsertTree: boolean;
+    needRecover: boolean;
     colliderInfList: IColliderInf[];
     recoverTag: string;
-    protected isRecovering: boolean = true;
     protected m_uuid: string;
 
     /**游戏对象初始化 */
     public init(param: GameObjectBaseInitParam): void {
-        this.isRecovering = false;
+        this.needRecover = false;
         this.m_uuid = param.uuid;
     }
 
@@ -43,7 +45,7 @@ export default class GameObjectBase extends Component implements IRecoverObject,
 
     /**回收时触发 不要乱调用该方法 */
     onRecover(): boolean {
-        this.isRecovering = true;
+        this.needRecover = false;
         this.node.setParent(null);
 
         return true;
@@ -65,22 +67,25 @@ export default class GameObjectBase extends Component implements IRecoverObject,
         throw new Error("Method not implemented.");
     }
 
-    onCollisionEnter(self: IColliderInf, other: IColliderInf) {
+    // onCollisionEnter(self: IColliderBase, other: IColliderBase) {
 
-    }
+    // }
 
-    onCollisionStay(self: IColliderInf, other: IColliderInf) {
+    // onCollisionStay(self: IColliderBase, other: IColliderBase) {
 
-    }
+    // }
 
-    onCollisionExit(self: IColliderInf, other: IColliderInf) {
+    // onCollisionExit(self: IColliderBase, other: IColliderBase) {
 
-    }
+    // }
 
     getColliderInfByUid(uid: string) {
         if (this.colliderInfList) {
             return this.colliderInfList.find(v => v.uuid == uid);
         }
+    }
 
+    updateColliders(): IColliderInf[] {
+        return [];
     }
 }

@@ -1,10 +1,17 @@
 import { Rect, Vec2, Vec3 } from "cc";
-
+import { IColliderInf } from "../../../Def/StructDef";
+ 
 export interface Rectangle {
     x: number;
     y: number;
     width: number;
     height: number;
+}
+
+export interface Circle {
+    x: number;
+    y: number;
+    radius: number;
 }
 
 /**射线 */
@@ -22,6 +29,7 @@ export interface CollisionResult {
 
 /**碰撞检测工具 */
 export class CollisionUtil {
+    /**射线是否与该矩形相交 */
     static rayVsRect(ray: Ray, rect: Rectangle): CollisionResult {
         const result: CollisionResult = {
             collided: false,
@@ -67,5 +75,44 @@ export class CollisionUtil {
         }
 
         return result;
+    }
+
+    /**获取碰撞体的碰撞盒 */
+    static getColliderBox(colliderInf: IColliderInf) {
+        let worldPos = colliderInf.getWorldPosition();
+
+        let rect = {
+            x: worldPos.x - 0.5 * colliderInf.width,
+            y: worldPos.y - 0.5 * colliderInf.height,
+            width: colliderInf.width,
+            height: colliderInf.height,
+        }
+
+        return rect;
+    }
+
+    static circleVsRect(circle: Circle, rect: Rectangle): boolean {
+        // 找到矩形上离圆心最近的点
+        const closestX = Math.max(rect.x, Math.min(circle.x, rect.x + rect.width));
+        const closestY = Math.max(rect.y, Math.min(circle.y, rect.y + rect.height));
+
+        // 计算圆心到最近点的距离
+        const distanceX = circle.x - closestX;
+        const distanceY = circle.y - closestY;
+
+        // 计算距离的平方
+        const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+        // 如果距离小于等于半径，则发生碰撞
+        return distanceSquared <= (circle.radius * circle.radius);
+    }
+
+    static circleVsCircle(circle_1: Circle, circle_2: Circle) {
+        const disX = circle_1.x - circle_2.x;
+        const disY = circle_1.y - circle_2.y;
+
+        const dis = Math.sqrt(disX * disX + disY * disY);
+
+        return dis <= circle_1.radius + circle_2.radius;
     }
 }

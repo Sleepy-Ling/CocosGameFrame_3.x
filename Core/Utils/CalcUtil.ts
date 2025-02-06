@@ -47,10 +47,5 @@ class _CalcUtil {
 
         return id_list[id_list.length - 1];
     }
-
-    /**计算出最终数值 */
-    public calcFinalStatsVal(s: IStats) {
-        return s.base * (1 + s.bonusRate) + s.bonusVal;
-    }
 }
 export const CalcUtil = new _CalcUtil();

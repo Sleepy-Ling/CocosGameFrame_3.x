@@ -1,5 +1,8 @@
 
+import { Enum_EventType } from "../../Def/EnumDef";
+import { CustomEvents } from "../../Event/CustomEvents";
 import GameObjectBase, { GameObjectBaseInitParam } from "../GameObjects/GameObjectBase";
+import { GM } from "../Global/GM";
 import { ObjectPool } from "../ObjectPool/ObjectPool";
 import { LogUtil } from "../Utils/LogUtil";
 import ManagerBase from "./ManagerBase";
@@ -26,9 +29,13 @@ export class GameObjectsManagerBase extends ManagerBase {
             LogUtil.Log("重复添加对象 " + id, gameObjectBase);
             return;
         }
+
         this.GameObjectsTable.set(id, gameObjectBase);
 
         gameObjectBase.init(initInf);
+
+        const gameEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Game);
+        gameEventDispatcher.Emit(CustomEvents.onGameObjectJoinSceneFinish, gameObjectBase);
     }
 
     /**
@@ -45,16 +52,25 @@ export class GameObjectsManagerBase extends ManagerBase {
         this.GameObjectsTable.delete(id);
         // gameObjectBase.recover();
         ObjectPool.put(gameObjectBase.recoverTag, gameObjectBase);
+
+        const gameEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Game);
+        gameEventDispatcher.Emit(CustomEvents.onGameObjectRemovedFinish, gameObjectBase);
+
     }
 
     /**
      * 移除全部游戏对象
      */
     public RemoveAllGameObjects() {
+        const gameEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Game);
         let allObjects = this.GetAllGameObjects();
+        
         allObjects.forEach((obj) => {
             // obj.recover();
             ObjectPool.put(obj.recoverTag, obj);
+
+            gameEventDispatcher.Emit(CustomEvents.onGameObjectRemovedFinish, obj);
+    
         })
 
         this.GameObjectsTable.clear();

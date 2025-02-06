@@ -24,7 +24,7 @@ export default class AnimCtrl {
      * @param startTime 播放开始时间
      * @param callback 播放完成回调
      */
-    playOnce(name: string, startTime: number = 0, callback: Function) {
+    playOnce(name: string, startTime: number = 0, callback?: Function, speed: number = 1) {
         // console.log("playonce", name, this.root?.name);
         if (name != null && !this.hasAnimName(name)) {
             // console.error(this.root.name, "dont have anim ", name);
@@ -55,7 +55,11 @@ export default class AnimCtrl {
             this.anim.targetOff(this);
             if (name) {
                 this.anim.play(name);
-                this.anim.getState(name).setTime(startTime);
+                const state = this.anim.getState(name);
+                if (state) {
+                    state.setTime(startTime);
+                    state.speed = speed;
+                }
 
                 if (callback) {
                     // console.log("start play  ");
@@ -204,5 +208,12 @@ export default class AnimCtrl {
 
     public reset() {
         this.skeleton.paused = false;
+    }
+
+    public getDuration(clipName?: string) {
+        clipName = clipName || this.anim.defaultClip?.name;
+
+        const state = this.anim.getState(clipName);
+        return state.duration || 0;
     }
 }

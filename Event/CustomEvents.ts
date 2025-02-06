@@ -10,6 +10,9 @@ export class CustomEvents {
     public static GameHideInBackground = "GameHideInBackground";
 
     public static LoadingProgress = "LoadingProgress";
+    /*------------碰撞相关消息------------*/
+    public static CollisonEvent = "CollisonEvent";
+
     /*------------游戏相关消息------------*/
     public static PauseGame = "PauseGame";
     public static ResumeGame = "ResumeGame";
@@ -39,7 +42,33 @@ export class CustomEvents {
     public static UpgradeTower = "UpgradeTower";
     /**移除塔 */
     public static RemoveTower = "RemoveTower";
+    /**生成小怪 */
+    public static GenerateEnemy = "GenerateEnemy";
+    /**清除小怪 */
+    public static ClearAllEnemy = "ClearAllEnemy";
+    /**生成子弹 */
+    public static ShootBullet = "ShootBullet"
 
+    /**游戏对象加入世界完成 */
+    public static onGameObjectJoinSceneFinish = "onGameObjectJoinSceneFinish";
+    /**游戏对象移除完成 */
+    public static onGameObjectRemovedFinish = "onGameObjectRemovedFinish";
+
+    /**移除游戏对象 (非即时移除) */
+    public static RemoveObject = "RemoveObject";
+
+    /**人物攻击事件 */
+    public static ObjectAttack = "ObjectAttack";
+    /**范围攻击 */
+    public static AreaAttack = "AreaAttack";
+    /**范围伤害技能 */
+    public static AreaDamageSkillTrigger = "AreaDamageSkillTrigger";
+    /**闪电链 */
+    public static LightningChainAttack = "LightningChainAttack";
+    // /**攻击伤害事件 （技能、道具）*/
+    // public static TriggerDamage = "TriggerDamage";
+    /**触发游戏事件 */
+    public static TriggerGameEvent = "TriggerGameEvent";
     /*------------调试相关消息------------*/
     public static Debug_PassGame = "Debug_PassGame";
     public static Debug_SetPlayerHp = "Debug_SetPlayerHp";

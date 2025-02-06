@@ -33,6 +33,9 @@ export default abstract class GameViewBase extends ViewBase {
     protected abstract onGameStart(info?: any): void;
     /**游戏结束 */
     protected abstract onGameEnd(info?: any): void;
+    /**游戏结束 */
+    protected abstract onGameUpdate(dt?: number): void;
+
     /**游戏恢复（从暂停状态中） */
     public abstract resume(info?: any): void;
     /**游戏暂停 */
@@ -67,8 +70,19 @@ export default abstract class GameViewBase extends ViewBase {
         return this.GameObjectsManagers.get(type);
     }
 
+    public RemoveObjectByType(type: Enum_GameObject) {
+        let manager = this.GetManager(type);
+        if (manager) {
+            manager.RemoveAllGameObjects();
+        }
+    }
+
     public RemoveObjectFromManager(...gameObjectBases: GameObjectBase[]) {
         for (const obj of gameObjectBases) {
+            if (!obj) {
+                continue;
+            }
+            
             let type = obj.type;
             if (!this.GameObjectsManagers.has(type)) {
                 continue;
@@ -165,5 +179,18 @@ export default abstract class GameViewBase extends ViewBase {
 
             next = itor.next();
         }
+    }
+
+    protected tempNeedRecoveryObject: GameObjectBase[] = [];
+    /**标记需要回收的对象 */
+    public markNeedRecoverObject(...obj: GameObjectBase[]) {
+        obj.forEach((v) => v.needRecover = true);
+
+        this.tempNeedRecoveryObject.push(...obj);
+    }
+    /**回收标记的对象 */
+    public recoveryObject() {
+        this.RemoveObjectFromManager(...this.tempNeedRecoveryObject);
+        this.tempNeedRecoveryObject = [];
     }
 }

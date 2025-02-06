@@ -12,7 +12,6 @@ import { TBDATA_Character } from "../../../TableData/TBDATA_Character";
  * @description 读取配置专用
  */
 export default class ConfigManager extends ManagerBase {
-
     async GetConfigByName(type: ConfigType | string, assetBundle: Enum_AssetBundle = Enum_AssetBundle.Config) {
         let jsonAsset = await ResourcesManager.LoadAssetRes<JsonAsset>(assetBundle, type);
 

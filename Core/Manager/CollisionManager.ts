@@ -1,19 +1,13 @@
-import { color, Color, Graphics, Node, v2, v3, Vec2 } from "cc";
+import { color, Color, Graphics, Rect, v3 } from "cc";
 import ManagerBase from "./ManagerBase";
-import Quadtree, { Rect } from '@timohausmann/quadtree-js';
 import GameObjectBase from "../GameObjects/GameObjectBase";
-import { IColliderBase, IColliderInf, IColliderObject } from "../../../Def/StructDef";
 import { customAlphabet } from "nanoid";
-import { CollisionUtil, Ray } from "../Utils/CollisionUtil";
-
+import { Enum_ColliderType, IColliderBase, IColliderInf, IColliderObject, ICollsionDetail, ICustomCollsionEvent } from "../../Def/StructDef";
+import { Quadtree } from "../../Collision/Quadtree/Quadtree";
+import { Rectangle } from "../../Collision/Quadtree/Rectangle";
+import { Circle, CollisionUtil } from "../Utils/CollisionUtil";
 
 const nanoid = customAlphabet("1234567890abcdefhijklmnopqrstuvwxyzABCDEFHIJKLMNOPQRSTUVWXYZ", 10);
-
-export enum Enum_ColliderType {
-    None,
-    Rect,
-    Circle,
-}
 
 export interface ICollisionPair {
     collider_1: IColliderBase;
@@ -21,55 +15,119 @@ export interface ICollisionPair {
 }
 
 export class CollisionManager extends ManagerBase {
-    Quadtree: Quadtree;
+    Quadtree: Quadtree<IColliderInf>;
 
     graphics: Graphics = null;
 
-    private lastCollisionsMap: Map<string, ICollisionPair> = new Map();
+    private _lastCollisionsMap: Map<string, ICollisionPair> = new Map();
 
-    public init(graphics: Graphics): any {
+    private _debugShow: boolean = false;
+
+    protected baseTreeRect: IColliderInf;
+
+    protected gameObjectList: GameObjectBase[];
+
+    public init(graphics: Graphics, debugShow?: boolean): any {
         this.graphics = graphics;
+        this._debugShow = debugShow;
+        this.gameObjectList = [];
 
         return super.init(null);
     }
 
-    public initTree(rect: Rect) {
+    public initTree(rect: Rectangle) {
         this.Quadtree = new Quadtree(rect);
+        let aa: IColliderInf = {
+            maskID: 0,
+            groupID: 0,
+            ownerUid: "",
+            type: Enum_ColliderType.None,
+            getWorldPosition: null,
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+            qtIndex: Rectangle.prototype.qtIndex
+        }
+        this.baseTreeRect = aa;
     }
 
-    public update(dt: number, gameObjectList: GameObjectBase[]): void {
+    public update(dt: number, gameObjectList: GameObjectBase[]) {
         this.Quadtree.clear();
 
-        let objectsLookup: Map<string, GameObjectBase> = new Map();
-
-        for (const obj of gameObjectList) {
-            // let worldPos = obj.node.getWorldPosition();
-
-            if (obj.colliderInfList == null) {
-                continue;
-            }
-
-            //更新碰撞盒
-            let colliderInf = obj.colliderInfList;
-            for (const inf of colliderInf) {
-                if (inf.uuid == null) {//给该碰撞盒分配uid
-                    inf.uuid = nanoid();
-                }
-
-                let worldPos = inf.getWorldPosition();
-                inf.x = worldPos.x + -inf.anchorX * inf.width;
-                inf.y = worldPos.y + -inf.anchorY * inf.height;
-
-                this.Quadtree.insert(inf);
-            }
-
-            objectsLookup.set(obj.getUUID(), obj);
+        let collisonEvent: ICustomCollsionEvent = {
+            beginEvent: [],
+            stayEvent: [],
+            exitEvent: []
         }
 
-        let lastCollisionPairIDArr: string[] = Array.from(this.lastCollisionsMap.keys());
+        for (const obj of gameObjectList) {
+            // const collider = obj as IColliderObject;
+            // if (obj.colliderInfList == null) {
+            //     continue;
+            // }
+
+            // if (!collider.needInsertTree) {
+            //     continue;
+            // }
+
+            // let canTriggeronCollisionEnter = collider.onCollisionEnter != null;
+            // let canTriggerCollisionStay = collider.onCollisionStay != null;
+            // let canTriggerCollisionExit = collider.onCollisionExit != null;
+
+            // //更新碰撞盒
+            // let colliderInf = obj.colliderInfList;
+            // for (const inf of colliderInf) {
+            //     if (inf.uuid == null) {//给该碰撞盒分配uid
+            //         inf.uuid = nanoid();
+            //     }
+
+            //     if (inf.ownerType == null) {
+            //         inf.ownerType = obj.type;
+            //     }
+
+            //     if (inf.canTriggeronCollisionEnter == null) {
+            //         inf.canTriggeronCollisionEnter = canTriggeronCollisionEnter;
+            //     }
+            //     if (inf.canTriggerCollisionStay == null) {
+            //         inf.canTriggerCollisionStay = canTriggerCollisionStay;
+            //     }
+            //     if (inf.canTriggerCollisionExit == null) {
+            //         inf.canTriggerCollisionExit = canTriggerCollisionExit;
+            //     }
+
+            //     let worldPos = inf.getWorldPosition();
+
+            //     if (inf.type == Enum_ColliderType.Rect) {
+            //         inf.x = worldPos.x - 0.5 * inf.width;
+            //         inf.y = worldPos.y - 0.5 * inf.height;
+            //     }
+            //     else {
+            //         inf.x = worldPos.x;
+            //         inf.y = worldPos.y;
+            //     }
+
+            //     this.Quadtree.insert(inf);
+            // }
+
+            let colliderList = obj.updateColliders();
+            if (colliderList) {
+                for (const element of colliderList) {
+                    if (element) {
+                        this.Quadtree.insert(element);
+                    }
+                }
+            }
+        }
+
+        let lastCollisionPairIDArr: string[] = Array.from(this._lastCollisionsMap.keys());
         let curCollisionPairMap: Map<string, ICollisionPair> = new Map();
 
         for (var i = 0; i < gameObjectList.length; i++) {
+            const collider = gameObjectList[i] as IColliderObject;
+            if (!collider.needInsertTree) {
+                continue;
+            }
 
             let colliderList = gameObjectList[i].colliderInfList;
             if (colliderList == null) {
@@ -79,7 +137,7 @@ export class CollisionManager extends ManagerBase {
             for (const myObject of colliderList) {
 
                 //[4] … and retrieve all objects from the same tree node
-                var candidates = this.Quadtree.retrieve<IColliderInf>(myObject);
+                var candidates = this.Quadtree.retrieve(myObject);
 
                 //[5] Check all collision candidates
                 for (let k = 0; k < candidates.length; k++) {
@@ -95,8 +153,7 @@ export class CollisionManager extends ManagerBase {
                     var intersect = this.getIntersection(myObject, myCandidate);
 
                     //[8] if they actually intersect, we can take further 
-                    //actions. In this script, colliding objects will turn 
-                    //green and change velocity 
+                    //actions. 
                     if (intersect) {
                         // … take actions
                         let pairID = this.getCollisionPairId(myObject, myCandidate);
@@ -105,13 +162,24 @@ export class CollisionManager extends ManagerBase {
                             collider_1: myObject,
                             collider_2: myCandidate
                         }
+
                         curCollisionPairMap.set(pairID, collisionPair);
 
-                        if (this.lastCollisionsMap.has(pairID)) {//触发stay方法
-                            myObject.owner.onCollisionStay(myObject, myCandidate);
+                        //当前碰撞组是否之前已经存在
+                        let hasLastCollision: boolean = this._lastCollisionsMap.has(pairID);
+                        if (myObject.canTriggerCollisionStay && hasLastCollision) {//触发stay方法
+                            let collisonDetail: ICollsionDetail = {
+                                selfCollider: myObject,
+                                otherCollider: myCandidate
+                            }
+                            collisonEvent.stayEvent.push(collisonDetail);
                         }
-                        else {//触发enter 方法
-                            myObject.owner.onCollisionEnter(myObject, myCandidate);
+                        else if (myObject.canTriggeronCollisionEnter && !hasLastCollision) {//触发enter 方法
+                            let collisonDetail: ICollsionDetail = {
+                                selfCollider: myObject,
+                                otherCollider: myCandidate
+                            }
+                            collisonEvent.beginEvent.push(collisonDetail);
                         }
 
                     }
@@ -122,40 +190,24 @@ export class CollisionManager extends ManagerBase {
 
         for (const element of lastCollisionPairIDArr) {
             if (!curCollisionPairMap.has(element)) {//触发exit 方法
-                let collisionPair = this.lastCollisionsMap.get(element);
+                let collisionPair = this._lastCollisionsMap.get(element);
 
-                // let result = this.splitCollisionPairId(element);
-
-                let obj_1: IColliderObject = collisionPair.collider_1.owner;
-                let obj_2: IColliderObject = collisionPair.collider_2.owner;
                 let colliderInf_1 = collisionPair.collider_1;
                 let colliderInf_2 = collisionPair.collider_2;
 
-                // obj_1 = objectsLookup.get(result.obj_1_uuid);
-                // obj_2 = objectsLookup.get(result.obj_2_uuid);
-
-                // if (obj_1 == null || obj_2 == null) {
-                //     continue;
-                // }
-
-                // let colliderInf_1 = obj_1.colliderInfList.find((v) => v.uuid == result.collider_1_uid);
-                // let colliderInf_2 = obj_2.colliderInfList.find((v) => v.uuid == result.collider_2_uid);
-
-                // obj_1.onCollisionExit(colliderInf_1, colliderInf_2);
-
-                if (obj_1 && obj_1.onCollisionExit) {
-                    obj_1.onCollisionExit(colliderInf_1, colliderInf_2);
+                let collisonDetail: ICollsionDetail = {
+                    selfCollider: colliderInf_1,
+                    otherCollider: colliderInf_2
                 }
-                if (obj_2 && obj_2.onCollisionExit) {
-                    obj_2.onCollisionExit(colliderInf_2, colliderInf_1);
-                }
+                collisonEvent.exitEvent.push(collisonDetail);
             }
         }
 
-        this.lastCollisionsMap = curCollisionPairMap;
+        this._lastCollisionsMap = curCollisionPairMap;
 
-        objectsLookup.clear();
         this.draw();
+
+        return collisonEvent;
     }
 
     protected getIntersection<T extends IColliderInf>(obj_1: T, obj_2: T) {
@@ -164,8 +216,46 @@ export class CollisionManager extends ManagerBase {
         const mask_1 = obj_1.maskID;
         const mask_2 = obj_2.maskID;
 
+        // return (group_1 & mask_2) > 0 || (group_2 & mask_1) > 0;
+
         if ((group_1 & mask_2) > 0 || (group_2 & mask_1) > 0) {
-            return this.containsRect(obj_1, obj_2);
+            if (obj_1.type == Enum_ColliderType.Rect && obj_2.type == Enum_ColliderType.Rect) {
+                return this.containsRect(obj_1, obj_2);
+            }
+            else if (obj_1.type == Enum_ColliderType.Circle && obj_2.type == Enum_ColliderType.Rect || obj_2.type == Enum_ColliderType.Circle && obj_1.type == Enum_ColliderType.Rect) {
+                let circleObj: T = obj_1.type == Enum_ColliderType.Circle ? obj_1 : obj_2;
+                let rectObj: T = obj_1.type == Enum_ColliderType.Rect ? obj_1 : obj_2;
+
+                let circle: Circle = {
+                    x: circleObj.x,
+                    y: circleObj.y,
+                    radius: circleObj.width / 2
+                }
+
+                let rectangle = {
+                    x: rectObj.x,
+                    y: rectObj.y,
+                    width: rectObj.width,
+                    height: rectObj.height
+                }
+
+                return CollisionUtil.circleVsRect(circle, rectangle);
+            }
+            else if (obj_1.type == Enum_ColliderType.Circle && obj_2.type == Enum_ColliderType.Circle) {
+                let circle1: Circle = {
+                    x: obj_1.x,
+                    y: obj_1.y,
+                    radius: obj_1.width / 2
+                }
+                let circle2: Circle = {
+                    x: obj_2.x,
+                    y: obj_2.y,
+                    radius: obj_2.width / 2
+                }
+
+                return CollisionUtil.circleVsCircle(circle1, circle2);
+            }
+
         }
 
     }
@@ -176,7 +266,7 @@ export class CollisionManager extends ManagerBase {
     * @param rect2 
     * @returns 
     */
-    containsRect(rect1: Rect, rect2: Rect) {
+    containsRect(rect1: IColliderInf, rect2: IColliderInf) {
         var r1w = rect1.width / 2,
             r1h = rect1.height / 2,
             r2w = rect2.width / 2,
@@ -185,21 +275,26 @@ export class CollisionManager extends ManagerBase {
         var distX = (rect1.x + r1w) - (rect2.x + r2w);
         var distY = (rect1.y + r1h) - (rect2.y + r2h);
 
-        if (Math.abs(distX) < r1w + r2w && Math.abs(distY) < r1h + r2h) {
-            return {
-                pushX: (r1w + r2w) - Math.abs(distX),
-                pushY: (r1h + r2h) - Math.abs(distY),
-                dirX: distX === 0 ? 0 : distX < 0 ? -1 : 1,
-                dirY: distY === 0 ? 0 : distY < 0 ? -1 : 1
-            }
-        } else {
-            return false;
-        }
+        // if (Math.abs(distX) < r1w + r2w && Math.abs(distY) < r1h + r2h) {
+        //     return {
+        //         pushX: (r1w + r2w) - Math.abs(distX),
+        //         pushY: (r1h + r2h) - Math.abs(distY),
+        //         dirX: distX === 0 ? 0 : distX < 0 ? -1 : 1,
+        //         dirY: distY === 0 ? 0 : distY < 0 ? -1 : 1
+        //     }
+        // } else {
+        //     return false;
+        // }
 
+        return Math.abs(distX) < r1w + r2w && Math.abs(distY) < r1h + r2h;
     }
 
     draw(): void {
         if (!this.graphics) {
+            return;
+        }
+
+        if (!this._debugShow) {
             return;
         }
 
@@ -227,7 +322,7 @@ export class CollisionManager extends ManagerBase {
 
         this.graphics.stroke();
 
-        let allObject = tree.retrieve<IColliderInf>(bounds);
+        let allObject = tree.retrieve(this.baseTreeRect);
 
         // Draw objects
         tempColor = color(Color.RED.toHEX());
@@ -235,14 +330,16 @@ export class CollisionManager extends ManagerBase {
         this.graphics.fillColor = tempColor;
 
         for (let obj of allObject) {
-            const halfHeight = obj.height / 2;
-            const halfWidth = obj.width / 2;
             tempPos.x = obj.x;
             tempPos.y = obj.y;
             tempPos = this.graphics.node.inverseTransformPoint(tempPos, tempPos);
 
-            this.graphics.rect(tempPos.x, tempPos.y, obj.width, obj.height);
-
+            if (obj.type == Enum_ColliderType.Rect) {
+                this.graphics.rect(tempPos.x, tempPos.y, obj.width, obj.height);
+            }
+            else if (obj.type == Enum_ColliderType.Circle) {
+                this.graphics.circle(tempPos.x, tempPos.y, obj.width / 2);
+            }
 
             this.graphics.fill();
         }
@@ -277,13 +374,13 @@ export class CollisionManager extends ManagerBase {
     private getCollisionPairId(collider_1: IColliderInf, collider_2: IColliderInf): string {
         let collider_1_uid = collider_1.uuid;
         let collider_2_uid = collider_2.uuid;
-        let obj_1_uuid = collider_1.owner.getUUID();
-        let obj_2_uuid = collider_2.owner.getUUID();
+        let obj_1_uuid = collider_1.ownerUid;//.owner.getUUID();
+        let obj_2_uuid = collider_2.ownerUid;//.owner.getUUID();
 
         let finial_1_uid = `${obj_1_uuid}-${collider_1_uid}`;
         let finial_2_uid = `${obj_2_uuid}-${collider_2_uid}`;
 
-        if (finial_1_uid.localeCompare(finial_2_uid) > 0) {
+        if (finial_1_uid < finial_2_uid) {
             return `${finial_1_uid}:${finial_2_uid}`;
         }
 
@@ -311,4 +408,38 @@ export class CollisionManager extends ManagerBase {
         return result;
     }
 
+    /**
+     * 根据指定的碰撞盒获取对应的碰撞体
+     * @param colliderInfList 指定的碰撞盒
+     */
+    public getCollider(colliderInfList: IColliderInf[]) {
+        let result: IColliderInf[] = [];
+
+        for (const myObject of colliderInfList) {
+            var candidates = this.Quadtree.retrieve(myObject);
+
+            //[5] Check all collision candidates
+            for (let k = 0; k < candidates.length; k++) {
+
+                var myCandidate = candidates[k];
+
+                //[6] since all objects are inside the tree, 
+                //we will also retrieve the current object itself.
+                //That's a collision case we want to skip.
+                if (myObject === myCandidate) continue;
+
+                //[7] check each candidate for real intersection
+                var intersect = this.getIntersection(myObject, myCandidate);
+
+                //[8] if they actually intersect, we can take further 
+                //actions. 
+                if (intersect) {
+                    result.push(myCandidate);
+                }
+
+            }
+        }
+
+        return result;
+    }
 }

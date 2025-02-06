@@ -19,6 +19,7 @@ import { Enum_AssetBundle } from "../../Def/EnumDef";
 import { RedDotSystem } from "../RedDot/RedDotSystem";
 import { IGameLogic } from "./IGameLogic";
 import { CollisionManager } from "../Manager/CollisionManager";
+import { GameSetting } from "../../../Def/ConstDef";
 
 /**游戏主管 GameMaster */
 export namespace GM {
@@ -81,7 +82,7 @@ export namespace GM {
         gamingTimerManager.init();
         ad_Manager.init();
         toastManager.init();
-        colliderManager.init(p.graphics);
+        colliderManager.init(p.graphics, GameSetting.Debug_Collision_Visible);
         //初始化红点系统
         // const redDotSf = await ResourcesManager.LoadSpriteFrameFromAtlas(Enum_AssetBundle.Icon, null, "RedDot");
         // RedDotSystem.init(redDotSf);
