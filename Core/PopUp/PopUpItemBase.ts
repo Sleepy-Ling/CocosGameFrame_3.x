@@ -10,6 +10,7 @@ export class PopUpItemBaseParam {
 
 @ccclass
 export default class PopUpItemBase extends Component implements IRecoverObject {
+    needRecover: boolean;
     recoverTag: string;
     @property(Label)
     label: Label = null;

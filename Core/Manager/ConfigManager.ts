@@ -4,8 +4,6 @@ import { ConfigType, Enum_AssetBundle } from "../../Def/EnumDef";
 
 import ManagerBase from "./ManagerBase";
 import { ResourcesManager } from "./ResourcesManager";
-import { GameConfig } from "../../../Def/ConstDef";
-import { TBDATA_Character } from "../../../TableData/TBDATA_Character";
 
 /**
  * 配置管理者
@@ -20,10 +18,5 @@ export default class ConfigManager extends ManagerBase {
 
     getConfig(cfgName: string, assetBundle: Enum_AssetBundle = Enum_AssetBundle.Config) {
         return ResourcesManager.getAssetRes<JsonAsset>(assetBundle, cfgName).json;
-    }
-    /**获得对应id人物配置 */
-    getCharacterConfig(id: number) {
-        let json = this.getConfig(GameConfig.TABLE_CHARACTER);
-        return json[id] as TBDATA_Character;
     }
 }

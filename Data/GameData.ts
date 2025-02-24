@@ -1,9 +1,5 @@
-import { GM } from "../Core/Global/GM";
-import { LogUtil } from "../Core/Utils/LogUtil";
-import { MathUtil } from "../Core/Utils/MathUtil";
 import { Util } from "../Core/Utils/Util"
 import { Enum_Currency } from "../Def/EnumDef";
-import { IConveyanceInf } from "../Def/StructDef";
 
 
 export abstract class SaveData {

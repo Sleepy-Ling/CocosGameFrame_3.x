@@ -2,9 +2,12 @@ import { Vec3 } from "cc";
 import { Circle } from "../Collision/Quadtree/Circle";
 import { NodeGeometry, Indexable } from "../Collision/Quadtree/types";
 
+/*===================框架内部结构定义=================== */
+
 export interface ITemp {
 
 }
+
 export enum Enum_ColliderType {
     None,
     Rect,

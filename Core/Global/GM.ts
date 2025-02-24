@@ -20,8 +20,13 @@ import { RedDotSystem } from "../RedDot/RedDotSystem";
 import { IGameLogic } from "./IGameLogic";
 import { CollisionManager } from "../Manager/CollisionManager";
 import { GameSetting } from "../../../Def/ConstDef";
+import { GameCosnfigManager } from "../../../Manager/GameConfigManager";
 
-/**游戏主管 GameMaster */
+/**
+ * 游戏主管 GameMaster
+ *
+ ** 这里面的成员类都可以改成自己继承的类，用于统一外部访问调用
+ */
 export namespace GM {
     /**ui管理者 */
     export const uiManager: UIManager = new UIManager();
@@ -32,7 +37,7 @@ export namespace GM {
     /**音频管理者 */
     export const audioManager: AudioManagerBase = initAudioManager();
     /**配置管理者 */
-    export const configManager: ConfigManager = new ConfigManager();
+    export const configManager: GameCosnfigManager = new GameCosnfigManager();
     /**预加载管理者 */
     export const preLoadManager: PreLoadManager = new PreLoadManager();
     /**奖励派发者 */

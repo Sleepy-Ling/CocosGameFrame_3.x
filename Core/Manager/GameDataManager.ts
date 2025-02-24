@@ -1,11 +1,7 @@
 // import { GM } from "../Core/Global/GM";
-import { GM } from "../Global/GM";
-import { MathUtil } from "../Utils/MathUtil";
 import { SaveData, SettingData, UserData } from "../../Data/GameData";
 import { GAMEDATA_TICK_INTERVAL } from "../../Def/ConstDef";
-import { Enum_UserSettingType, Enum_Language, Enum_Currency, Enum_EventType, ConfigType } from "../../Def/EnumDef";
-import { IConveyanceInf } from "../../Def/StructDef";
-import { CustomEvents } from "../../Event/CustomEvents";
+import { Enum_UserSettingType, Enum_Language } from "../../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
 
 /**数据处理 */
