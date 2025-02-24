@@ -1,10 +1,10 @@
 import ManagerBase from "./ManagerBase";
 
-import { CustomEvents } from "../../Event/CustomEvents";
-import { GM } from "../Global/GM";
-import { Enum_AssetBundle, Enum_EventType, UIName } from "../../Def/EnumDef";
-import { ViewBase } from "../View/ViewBase";
-import { PlayerData } from "../../Data/PlayerData";
+import { CustomEvents } from "../Event/CustomEvents";
+import { GM } from "../Core/Global/GM";
+import { Enum_AssetBundle, Enum_EventType, UIName } from "../Def/EnumDef";
+import { ViewBase } from "../Core/View/ViewBase";
+import { PlayerData } from "../Data/PlayerData";
 import { Vec2, Size, Mask, Label, find, v2, size, Tween, v3, Node, EventTouch, __private, tween, UITransform } from "cc";
 
 export type TutorialCallback = (err, result) => void;

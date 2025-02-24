@@ -6,8 +6,8 @@
 //  - https://docs.cocos.com/creator/2.4/manual/en/scripting/life-cycle-callbacks.html
 
 import { _decorator } from "cc";
-import { Util } from "../Utils/Util";
-import { AudioName, Enum_AssetBundle } from "../../Def/EnumDef";
+import { Util } from "../Core/Utils/Util";
+import { AudioName, Enum_AssetBundle } from "../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
 
 const { ccclass, property } = _decorator;

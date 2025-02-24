@@ -1,12 +1,12 @@
 import { __private, Asset, AssetManager, assetManager, createDefaultPipeline, JsonAsset, log } from "cc";
-import { VIEW_DIR } from "../../Def/ConstDef";
-import { Enum_AssetBundle, Enum_Layer, UIName } from "../../Def/EnumDef";
-import { CustomEvents } from "../../Event/CustomEvents";
-import EventDispatcher from "../../Event/EventDispatcher";
+import { VIEW_DIR } from "../Def/ConstDef";
+import { Enum_AssetBundle, Enum_Layer, UIName } from "../Def/EnumDef";
+import { CustomEvents } from "../Event/CustomEvents";
+import EventDispatcher from "../Event/EventDispatcher";
 import ConfigManager from "./ConfigManager";
 import ManagerBase from "./ManagerBase";
 import { ResourcesManager } from "./ResourcesManager";
-import { GM } from "../Global/GM";
+import { GM } from "../Core/Global/GM";
 
 /**预加载管理者 */
 export default class PreLoadManager extends ManagerBase {

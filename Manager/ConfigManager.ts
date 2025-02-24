@@ -1,6 +1,6 @@
 
 import { JsonAsset } from "cc";
-import { ConfigType, Enum_AssetBundle } from "../../Def/EnumDef";
+import { ConfigType, Enum_AssetBundle } from "../Def/EnumDef";
 
 import ManagerBase from "./ManagerBase";
 import { ResourcesManager } from "./ResourcesManager";

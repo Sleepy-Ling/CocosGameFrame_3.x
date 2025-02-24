@@ -3,7 +3,7 @@
 
 import { _decorator, Canvas, Game, MathBase, Vec2 } from 'cc';
 import { Enum_GameState, Enum_GameObject } from '../../Def/EnumDef';
-import { GameObjectsManagerBase } from '../Manager/GameObjectsManagerBase';
+import { GameObjectsManagerBase } from '../../Manager/GameObjectsManagerBase';
 
 import GameObjectBase, { GameObjectBaseInitParam } from '../GameObjects/GameObjectBase';
 import { ViewBase, ViewParamBase } from './ViewBase';

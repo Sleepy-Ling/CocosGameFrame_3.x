@@ -1,11 +1,11 @@
 import { color, Color, Graphics, Rect, v3 } from "cc";
 import ManagerBase from "./ManagerBase";
-import GameObjectBase from "../GameObjects/GameObjectBase";
+import GameObjectBase from "../Core/GameObjects/GameObjectBase";
 import { customAlphabet } from "nanoid";
-import { Enum_ColliderType, IColliderBase, IColliderInf, IColliderObject, ICollsionDetail, ICustomCollsionEvent } from "../../Def/StructDef";
-import { Quadtree } from "../../Collision/Quadtree/Quadtree";
-import { Rectangle } from "../../Collision/Quadtree/Rectangle";
-import { Circle, CollisionUtil } from "../Utils/CollisionUtil";
+import { Enum_ColliderType, IColliderBase, IColliderInf, IColliderObject, ICollsionDetail, ICustomCollsionEvent } from "../Def/StructDef";
+import { Quadtree } from "../Collision/Quadtree/Quadtree";
+import { Rectangle } from "../Collision/Quadtree/Rectangle";
+import { Circle, CollisionUtil } from "../Core/Utils/CollisionUtil";
 
 const nanoid = customAlphabet("1234567890abcdefhijklmnopqrstuvwxyzABCDEFHIJKLMNOPQRSTUVWXYZ", 10);
 

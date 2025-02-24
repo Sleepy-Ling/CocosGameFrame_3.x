@@ -1,11 +1,11 @@
 import { find, instantiate, Label, Node, Prefab, UITransform, v3, Vec3 } from "cc"
-import { GM } from "../Global/GM"
-import { ObjectPool } from "../ObjectPool/ObjectPool"
-import PopUpItemBase, { PopUpItemBaseParam } from "../PopUp/PopUpItemBase"
-import { ViewBase, ViewParamBase, ViewTranstionParam } from "../View/ViewBase"
-import { GAME_VERSION, IS_DEBUG, VIEW_DIR } from "../../Def/ConstDef"
-import { UIName, Enum_AssetBundle, Enum_Layer, Enum_EventType } from "../../Def/EnumDef"
-import { CustomEvents } from "../../Event/CustomEvents"
+import { GM } from "../Core/Global/GM"
+import { ObjectPool } from "../Core/ObjectPool/ObjectPool"
+import PopUpItemBase, { PopUpItemBaseParam } from "../Core/PopUp/PopUpItemBase"
+import { ViewBase, ViewParamBase, ViewTranstionParam } from "../Core/View/ViewBase"
+import { GAME_VERSION, IS_DEBUG, VIEW_DIR } from "../Def/ConstDef"
+import { UIName, Enum_AssetBundle, Enum_Layer, Enum_EventType } from "../Def/EnumDef"
+import { CustomEvents } from "../Event/CustomEvents"
 import { ResourcesManager } from "./ResourcesManager"
 
 

@@ -1,10 +1,10 @@
 
-import { Enum_EventType } from "../../Def/EnumDef";
-import { CustomEvents } from "../../Event/CustomEvents";
-import GameObjectBase, { GameObjectBaseInitParam } from "../GameObjects/GameObjectBase";
-import { GM } from "../Global/GM";
-import { ObjectPool } from "../ObjectPool/ObjectPool";
-import { LogUtil } from "../Utils/LogUtil";
+import { Enum_EventType } from "../Def/EnumDef";
+import { CustomEvents } from "../Event/CustomEvents";
+import GameObjectBase, { GameObjectBaseInitParam } from "../Core/GameObjects/GameObjectBase";
+import { GM } from "../Core/Global/GM";
+import { ObjectPool } from "../Core/ObjectPool/ObjectPool";
+import { LogUtil } from "../Core/Utils/LogUtil";
 import ManagerBase from "./ManagerBase";
 
 export class GameObjectsManagerBase extends ManagerBase {

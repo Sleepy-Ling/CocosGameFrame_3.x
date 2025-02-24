@@ -1,6 +1,6 @@
 import { AssetManager, SpriteFrame, sys, Texture2D, SpriteAtlas, Asset, assetManager, ImageAsset, log } from "cc";
 import { DEBUG } from "cc/env";
-import { Enum_AssetBundle, AtlasType } from "../../Def/EnumDef";
+import { Enum_AssetBundle, AtlasType } from "../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
 
 class resourcesManager extends ManagerBase {

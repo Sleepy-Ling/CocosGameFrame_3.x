@@ -1,7 +1,7 @@
 // import { GM } from "../Core/Global/GM";
-import { SaveData, SettingData, UserData } from "../../Data/GameData";
-import { GAMEDATA_TICK_INTERVAL } from "../../Def/ConstDef";
-import { Enum_UserSettingType, Enum_Language } from "../../Def/EnumDef";
+import { SaveData, SettingData, UserData } from "../Data/GameData";
+import { GAMEDATA_TICK_INTERVAL } from "../Def/ConstDef";
+import { Enum_UserSettingType, Enum_Language } from "../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
 
 /**数据处理 */

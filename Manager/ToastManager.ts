@@ -1,7 +1,7 @@
 import { v2 } from "cc";
-import { GM } from "../Global/GM";
-import { PopUpItemBaseParam } from "../PopUp/PopUpItemBase";
-import { ToastParam } from "../PopUp/Toast";
+import { GM } from "../Core/Global/GM";
+import { PopUpItemBaseParam } from "../Core/PopUp/PopUpItemBase";
+import { ToastParam } from "../Core/PopUp/Toast";
 
 
 import ManagerBase from "./ManagerBase";

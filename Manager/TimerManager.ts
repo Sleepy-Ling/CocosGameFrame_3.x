@@ -1,4 +1,4 @@
-import { Util } from "../Utils/Util";
+import { Util } from "../Core/Utils/Util";
 import ManagerBase from "./ManagerBase";
 
 /**计时器事件 */

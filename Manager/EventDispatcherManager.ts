@@ -1,5 +1,5 @@
-import { Enum_EventType } from "../../Def/EnumDef";
-import EventDispatcher from "../../Event/EventDispatcher";
+import { Enum_EventType } from "../Def/EnumDef";
+import EventDispatcher from "../Event/EventDispatcher";
 import ManagerBase from "./ManagerBase";
 
 export default class EventDispatcherManager extends ManagerBase {

@@ -1,5 +1,5 @@
 import { AudioClip, AudioSource, Node } from "cc";
-import { AudioName, Enum_AssetBundle } from "../../Def/EnumDef";
+import { AudioName, Enum_AssetBundle } from "../Def/EnumDef";
 import AudioManagerBase from "./AudioManagerBase";
 import { ResourcesManager } from "./ResourcesManager";
 
