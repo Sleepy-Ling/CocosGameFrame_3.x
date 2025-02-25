@@ -8,7 +8,7 @@ import ManagerBase from "./ManagerBase";
 import { ResourcesManager } from "./ResourcesManager";
 import { GM } from "../Core/Global/GM";
 
-/**预加载管理者 */
+/**预加载管理者/首次加载管理者 */
 export default class PreLoadManager extends ManagerBase {
     private _loadTotal: number = 0;
     private _curLoadCount: number = 0;
@@ -21,11 +21,13 @@ export default class PreLoadManager extends ManagerBase {
 
     }
 
+    /**预先加载分包 */
     private _PreloadBundle: Enum_AssetBundle[] = [
         Enum_AssetBundle.Common,
         Enum_AssetBundle.Config,
     ]
 
+    /**预先加载界面 */
     private _preloadView: Array<{ bundle: Enum_AssetBundle, viewName: UIName }> = [
     ]
 
@@ -37,6 +39,7 @@ export default class PreLoadManager extends ManagerBase {
         return super.init(inf);
     }
 
+    /**开始加载 */
     async BeginLoad(uiEventDispatcher: EventDispatcher, configManager: ConfigManager): Promise<void> {
         await GM.uiManager.OpenUI(UIName.LoadingView, null, null, Enum_Layer.Loading);
 
@@ -81,7 +84,7 @@ export default class PreLoadManager extends ManagerBase {
         }
 
         for (const inf of this._preloadView) {
-            let path: string = `${VIEW_DIR}/${UIName[inf.viewName]}`;
+            let path: string = `${VIEW_DIR}/${inf.viewName}`;
 
             let pp = ResourcesManager.LoadAssetRes(inf.bundle, path);
             pp.then((assert) => {

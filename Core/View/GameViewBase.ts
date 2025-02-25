@@ -8,7 +8,7 @@ import { GameObjectsManagerBase } from '../../Manager/GameObjectsManagerBase';
 import GameObjectBase, { GameObjectBaseInitParam } from '../GameObjects/GameObjectBase';
 import { ViewBase, ViewParamBase } from './ViewBase';
 
-export class GameViewInitParam extends ViewParamBase {
+export class GameViewBaseInitParam extends ViewParamBase {
     public levelID: number = -1;
     constructor(lv: number) {
         super();
@@ -48,9 +48,9 @@ export default abstract class GameViewBase extends ViewBase {
     protected abstract isGamePass(): boolean;
 
     /**游戏界面参数 */
-    protected viewParam: GameViewInitParam;
+    protected viewParam: GameViewBaseInitParam;
 
-    public onViewOpen(param: GameViewInitParam) {
+    public onViewOpen(param: GameViewBaseInitParam) {
         this.viewParam = param;
 
     }

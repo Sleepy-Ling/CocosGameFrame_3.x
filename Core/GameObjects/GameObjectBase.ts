@@ -3,8 +3,7 @@ import { _decorator, Component } from "cc";
 import { Enum_GameObject } from "../../Def/EnumDef";
 
 import IRecoverObject from "./IRecoverObject";
-import { IColliderBase, IColliderInf, IColliderObject } from "../../Def/StructDef";
-import { ICard, ICharacterFactor } from "../../../Def/StructDef";
+import { IColliderInf, IColliderObject } from "../../Def/StructDef";
 const { ccclass, property } = _decorator;
 
 /**游戏基类接口（重写必要的接口） */

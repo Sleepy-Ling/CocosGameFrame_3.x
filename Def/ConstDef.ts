@@ -1,6 +1,6 @@
 /*===================框架内部常量定义=================== */
 
-export const GAME_VERSION: string = "0.0.4";
+export const Frame_VERSION: string = "0.0.4";
 
 export const IS_DEBUG: boolean = false;
 
@@ -13,6 +13,8 @@ export const IS_LOG_MOUSE_DETAIL: boolean = false;
 export const GAMEDATA_TICK_INTERVAL: number = 1;
 /**是否需要加ai */
 export const IS_ADD_AI: boolean = true;
+
+export const Debug_Collision_Visible: boolean = false;
 /*========================目录============================== */
 /**预制体目录 */
 export const PREFAB_DIR: string = "Prefab";

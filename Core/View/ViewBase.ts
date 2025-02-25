@@ -1,15 +1,16 @@
 import { Button, Component, EventTouch, Label, Node, RichText, TTFFont, Vec2, _decorator } from 'cc';
-import { AudioName, Enum_AssetBundle, Enum_Language, Enum_Orientation } from '../../Def/EnumDef';
+import { AudioName, ConfigType, Enum_AssetBundle, Enum_Language, Enum_Orientation } from '../../Def/EnumDef';
 
 import { GM } from '../Global/GM';
 
 import IViewBase from './IViewBase';
+import { ResourcesManager } from '../../Manager/ResourcesManager';
 const { ccclass, property, menu } = _decorator;
 
 /**界面过渡参数 */
 export class ViewTranstionParam {
     /**过渡时所用到的加载界面（值等同于UIName） */
-    loadingViewType: number;
+    loadingViewType: string;
 
     /**所属分包 */
     bundle?: Enum_AssetBundle;
@@ -46,9 +47,35 @@ export class ViewBase extends Component implements IViewBase {
     }
 
     /**预加载对应场景资源 */
-    public async preLoadSrc(param: ViewParamBase): Promise<boolean> {
-        return Promise.resolve(true);
+    public async preLoadSrc(viewName: string, param: ViewParamBase): Promise<boolean> {
+        //读取界面资源预加载配置
+        const json = GM.configManager.getConfig(ConfigType.Table_ViewLoadRes);
+        if (!json || !json[viewName]) {
+            return Promise.resolve(true);
+        }
 
+        console.log(viewName, "preloadSrc start -->");
+
+        let preLoadPromiseList: Promise<any>[] = [];
+        let data = json[viewName];
+        let keys = Object.keys(data);
+        for (let i = 0; i < keys.length / 2; i++) {
+            let idx = i + 1;
+            let moduleName: string = data[`module_${idx}`];
+            let directory: string = data[`directory_${idx}`];
+
+            console.log("moduleName:", moduleName, "directory:", directory);
+
+            let p = ResourcesManager.LoadDirInBundle(moduleName, directory);
+            preLoadPromiseList.push(p);
+        }
+
+        //预加载全部必要的资源
+        await Promise.all(preLoadPromiseList);
+
+        console.log(viewName, "preloadSrc end ---->");
+
+        return Promise.resolve(true);
     }
 
 

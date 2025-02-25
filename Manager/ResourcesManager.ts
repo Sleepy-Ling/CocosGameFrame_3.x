@@ -78,11 +78,10 @@ class resourcesManager extends ManagerBase {
 
     /**直接获取已经加载的资源 */
     public getAssetRes<T extends Asset>(BundleName: Enum_AssetBundle | string, path: string): T {
-        // if (this.ResData[BundleName][path]) {
-        //     return this.ResData[BundleName][path];
-        // }
-
-        return this.getAssetBundle(BundleName).get(path);
+        if (this.isBundleLoadFinished(BundleName)) {
+            let bundle = this.getAssetBundle(BundleName);
+            return bundle.get(path);
+        }
 
         return null;
     }
@@ -145,14 +144,52 @@ class resourcesManager extends ManagerBase {
         })
     }
 
-    public async ReleaseAssetRes(BundleName: Enum_AssetBundle | string, path: string) {
+    /**释放该分包中指定路径的资源 */
+    public ReleaseAssetRes<T extends Asset>(BundleName: Enum_AssetBundle | string, path: string, type?: { new(): T }) {
         let ab = assetManager.getBundle(BundleName);
         if (!ab) {
             return;
         }
         // let ab = await this.LoadAssetBundle(BundleName)
         // this.ResData[BundleName][path] = null
-        ab.release(path);
+        ab.release(path, type);
+    }
+
+    /**
+     * 释放分包中指定目录内的全部资源
+     * @param BundleName 分包名
+     * @param dirName 目录
+     */
+    public ReleaseAssetInDir(BundleName: Enum_AssetBundle | string, dirName: string) {
+        if (this.isBundleLoadFinished(BundleName)) {
+            const ab = assetManager.getBundle(BundleName);
+            const infos = ab.getDirWithPath(dirName);
+            console.log("release assets in dir", infos);
+
+            for (const element of infos) {
+                ab.release(element.path);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 释放这个分包全部资源
+     * @param BundleName 分包名
+     * @returns 
+     */
+    public ReleaseAllAssetsInBundle(BundleName: Enum_AssetBundle | string) {
+        if (this.isBundleLoadFinished(BundleName)) {
+            const ab = assetManager.getBundle(BundleName);
+            ab.releaseAll();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**加载分包 */
@@ -176,6 +213,7 @@ class resourcesManager extends ManagerBase {
         })
     }
 
+    /**加载该分包内全部内容 */
     public async LoadAllAssetInBundle(BundleName: Enum_AssetBundle | string): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
             let bundle = await this.LoadAssetBundle(BundleName);
@@ -200,7 +238,11 @@ class resourcesManager extends ManagerBase {
             let bundle = await this.LoadAssetBundle(bundleName);
 
             bundle.loadDir(dirName, (err: Error, data: Asset[]) => {
-                log("LoadDirInBundle",bundleName, data)
+                if (err) {
+                    reject(err);
+                }
+
+                log("LoadDirInBundle", bundleName, dirName, data);
                 resolve(true);
             });
 

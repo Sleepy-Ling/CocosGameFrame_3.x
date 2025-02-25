@@ -19,8 +19,7 @@ import { Enum_AssetBundle } from "../../Def/EnumDef";
 import { RedDotSystem } from "../RedDot/RedDotSystem";
 import { IGameLogic } from "./IGameLogic";
 import { CollisionManager } from "../../Manager/CollisionManager";
-import { GameSetting } from "../../../Def/ConstDef";
-import { GameCosnfigManager } from "../../../Manager/GameConfigManager";
+import { Debug_Collision_Visible } from "../../Def/ConstDef";
 
 /**
  * 游戏主管 GameMaster
@@ -37,7 +36,7 @@ export namespace GM {
     /**音频管理者 */
     export const audioManager: AudioManagerBase = initAudioManager();
     /**配置管理者 */
-    export const configManager: GameCosnfigManager = new GameCosnfigManager();
+    export const configManager: ConfigManager = new ConfigManager();
     /**预加载管理者 */
     export const preLoadManager: PreLoadManager = new PreLoadManager();
     /**奖励派发者 */
@@ -87,7 +86,7 @@ export namespace GM {
         gamingTimerManager.init();
         ad_Manager.init();
         toastManager.init();
-        colliderManager.init(p.graphics, GameSetting.Debug_Collision_Visible);
+        colliderManager.init(p.graphics, Debug_Collision_Visible);
         //初始化红点系统
         // const redDotSf = await ResourcesManager.LoadSpriteFrameFromAtlas(Enum_AssetBundle.Icon, null, "RedDot");
         // RedDotSystem.init(redDotSf);

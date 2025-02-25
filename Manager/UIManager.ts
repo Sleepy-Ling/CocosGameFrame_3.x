@@ -3,14 +3,14 @@ import { GM } from "../Core/Global/GM"
 import { ObjectPool } from "../Core/ObjectPool/ObjectPool"
 import PopUpItemBase, { PopUpItemBaseParam } from "../Core/PopUp/PopUpItemBase"
 import { ViewBase, ViewParamBase, ViewTranstionParam } from "../Core/View/ViewBase"
-import { GAME_VERSION, IS_DEBUG, VIEW_DIR } from "../Def/ConstDef"
+import { Frame_VERSION, IS_DEBUG, VIEW_DIR } from "../Def/ConstDef"
 import { UIName, Enum_AssetBundle, Enum_Layer, Enum_EventType } from "../Def/EnumDef"
 import { CustomEvents } from "../Event/CustomEvents"
 import { ResourcesManager } from "./ResourcesManager"
 
 
 export class ViewData {
-    modName: UIName
+    modName: string
     node: Node;
     show: boolean;
     load: boolean;
@@ -18,7 +18,7 @@ export class ViewData {
 
     viewBaseComp: ViewBase;
     assetBundle: Enum_AssetBundle;
-    constructor(modName: UIName, assetBundle?: Enum_AssetBundle) {
+    constructor(modName: string, assetBundle?: Enum_AssetBundle) {
         this.modName = modName;
         this.show = false;
         this.load = false;
@@ -28,9 +28,9 @@ export class ViewData {
 export default class UIManager {
     private _ViewMap: ViewData[] = [];
     private _layerDict: { [key: number]: Node };
-    private _layerOrder: { [key: number]: number[] };
+    private _layerOrder: { [key: number]: string[] };
 
-    private getViewData(constModName: UIName, module?: Enum_AssetBundle): ViewData {
+    private getViewData(constModName: string, module?: Enum_AssetBundle): ViewData {
         for (let x = 0; x < this._ViewMap.length; x++) {
             const element = this._ViewMap[x];
             if (element.modName == constModName) {
@@ -48,7 +48,7 @@ export default class UIManager {
 
             //加载对应预制体
             let bundle: Enum_AssetBundle = module || Enum_AssetBundle.Common;
-            let path: string = `${VIEW_DIR}/${UIName[viewData.modName]}`;
+            let path: string = `${VIEW_DIR}/${viewData.modName}`;
 
             await ResourcesManager.LoadAssetRes<Prefab>(bundle, path).then(async (prefab) => {
                 viewData.load = false;
@@ -111,7 +111,7 @@ export default class UIManager {
             lab.node.setParent(this.getLayer(Enum_Layer.GM));
             lab.node.setPosition(v3(-350, 1624 / 2));
 
-            lab.string = GAME_VERSION;
+            lab.string = Frame_VERSION;
 
         }
     }
@@ -152,19 +152,19 @@ export default class UIManager {
         return p;
     }
 
-    public async OpenUI(name: UIName, viewParam: ViewParamBase = null, module: Enum_AssetBundle = Enum_AssetBundle.Common, layer: Enum_Layer = Enum_Layer.UI, transtionParam?: ViewTranstionParam): Promise<ViewBase> {
-        console.log("OpenUI ==>", "模块名:", module, "界面名:", UIName[name], "界面id:", name);
+    public async OpenUI(name: string, viewParam: ViewParamBase = null, module: Enum_AssetBundle = Enum_AssetBundle.Common, layer: Enum_Layer = Enum_Layer.UI, transtionParam?: ViewTranstionParam): Promise<ViewBase> {
+        console.log("OpenUI ==>", "模块名:", module, "界面名:", name, "界面id:", name);
 
         let viewData = this.getViewData(name, module);
         if (viewData.load) {
-            console.log(UIName[name], "is loading ");
+            console.log(name, "is loading ");
 
             return Promise.resolve(null);
         }
 
         let comp: ViewBase = viewData.viewBaseComp;
         if (viewData.show) {
-            console.log("view:", UIName[name], " already exist !");
+            console.log("view:", name, " already exist !");
             return Promise.resolve(comp);
         }
 
@@ -181,7 +181,7 @@ export default class UIManager {
             comp = await this.LoadView(viewData, module);
         }
 
-        const preLoadPromise = await comp.preLoadSrc(viewParam);
+        const preLoadPromise = await comp.preLoadSrc(name, viewParam);
 
         if (!preLoadPromise) {
             console.error("preLoad fail", name);
@@ -215,10 +215,10 @@ export default class UIManager {
         return Promise.resolve(comp);
     }
 
-    public CloseUIByName(name: UIName) {
+    public CloseUIByName(name: string) {
         let viewData = this.getViewData(name);
         if (viewData && !viewData.load && viewData.show) {
-            console.log("CloseUI ==>", UIName[name]);
+            console.log("CloseUI ==>", name);
             viewData.viewBaseComp?.onViewCloseBefore();
             viewData.show = false;
             viewData.node.active = false;
@@ -247,7 +247,7 @@ export default class UIManager {
         }
     }
 
-    public GetUI(name: UIName): ViewBase {
+    public GetUI(name: string): ViewBase {
         for (let i = 0; i < this._ViewMap.length; i++) {
             const element = this._ViewMap[i];
             if (element.modName == name) {
@@ -260,7 +260,7 @@ export default class UIManager {
      * 获取界面数据 不建议调用该接口
      * *注意！请勿修改该返回值任何参数
      */
-    public GetUIViewData(name: UIName): ViewData {
+    public GetUIViewData(name: string): ViewData {
         for (let i = 0; i < this._ViewMap.length; i++) {
             const element = this._ViewMap[i];
             if (element.modName == name) {
@@ -269,7 +269,7 @@ export default class UIManager {
         }
     }
 
-    public GetUIIsShowing(name: UIName): boolean {
+    public GetUIIsShowing(name: string): boolean {
         for (let i = 0; i < this._ViewMap.length; i++) {
             const element = this._ViewMap[i];
             if (element.modName == name) {
@@ -289,7 +289,7 @@ export default class UIManager {
     }
 
     /**销毁界面 （注意：是否真的需要销毁该界面） */
-    public DestoryUIByName(name: UIName) {
+    public DestoryUIByName(name: string) {
         let idx = this._ViewMap.findIndex((value) => {
             return value.modName == name;
         })
@@ -307,7 +307,7 @@ export default class UIManager {
         let comp = viewData.node.getComponent(ViewBase);
         viewData.viewBaseComp = comp;
         if (comp == null) {
-            console.log("UI   " + UIName[viewData.modName] + "上不含同名脚本");
+            console.log("UI   " + viewData.modName + "上不含同名脚本");
             return Promise.resolve(false);
         }
 
@@ -317,7 +317,7 @@ export default class UIManager {
     }
 
     public GetActiveViewByLayer(layer: Enum_Layer) {
-        let result: UIName[] = [];
+        let result: string[] = [];
 
         for (const viewData of this._ViewMap) {
             if (viewData.node.parent == this._layerDict[layer] && viewData.show) {
@@ -423,7 +423,7 @@ export default class UIManager {
 }
 
 export interface IViewInf {
-    name: UIName;
+    name: string;
     layer: number;
     assetBundle: Enum_AssetBundle;
     zIndex: number;

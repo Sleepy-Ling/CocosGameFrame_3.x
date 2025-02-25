@@ -75,3 +75,4 @@ export interface ICustomCollsionEvent {
     stayEvent: ICollsionDetail[];
     exitEvent: ICollsionDetail[];
 }
+

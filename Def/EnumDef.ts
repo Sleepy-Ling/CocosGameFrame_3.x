@@ -22,10 +22,12 @@ export enum AdType {
  * @enum {number}}
  */
 export enum ConfigType {
-    Table_Level = "Table_Level",
-    Table_MovementBase = "Table_MovementBase",
-    Table_Road = "Table_Road",
-    Table_Skin = "Table_Skin",
+    // Table_Level = "Table_Level",
+    // Table_MovementBase = "Table_MovementBase",
+    // Table_Road = "Table_Road",
+    // Table_Skin = "Table_Skin",
+
+    Table_ViewLoadRes = "Table_ViewLoadRes",
 }
 
 /**
@@ -61,37 +63,6 @@ export enum AudioName {
     BGM = "shape shift BG",
     ClickBtn = "",
     SwitchViewFinish = "",
-
-    /**人物走路声音 */
-    player = "player",
-
-    spider_walk_04 = "spider_walk_04",
-    spider_walk_05 = "spider_walk_05",
-    spider_walk_06 = "spider_walk_06",
-    spider_walk_07 = "spider_walk_07",
-
-    Tank = "Tank",
-    Boat = "Boat",
-    Carwithhorn = "Carwithhorn",
-    Cycle = "Cycle",
-    ZombieTruck = "ZombieTruck",
-    FastRun = "FastRun",
-    QuadBike = "QuadBike",
-    snowreal = "snowreal",
-    Bike = "Bike",
-    car = "car",
-    jetplane = "jetplane",
-
-    TNT = "Tnt",
-    baloon1 = "baloon1",
-    Paint = "Paint",
-
-    settlement = "4thlevel",
-    fireWork = "NewIconic",
-    Star = "Star Sound",
-    upgrade = "UI_Upgrade",
-
-    UI_Back = "UI_Back",
 }
 
 // export const Enum_Sound = Enum(AudioName);
@@ -106,22 +77,11 @@ export enum UIName {
     MainGameView,
 
     //ui层
-    TestView,
-    TestView2,
-    MainGameHUDView,
-    SkinView,
-    SkinRewardView,
-    NewPlayerView,
-    UnlockConveyanceView,
-    SettlementView,
-    RandomSkinView,
-    SettingView,
-    DebugView,
-    ColliderTestView,
+
     //pop 层
 
     //loading层
-    LoadingView = 1001,
+    LoadingView = "LoadingView",
 }
 
 /**游戏状态 */
@@ -201,7 +161,7 @@ export enum Enum_EventType {
 
     /**新手教学 */
     Guide,
- 
+
     Debug,
 }
 
