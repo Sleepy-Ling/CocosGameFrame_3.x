@@ -25,29 +25,29 @@ export class ViewParamBase {
 /**界面基类 */
 @ccclass()
 @menu("View/ViewBase")
-export class ViewBase extends Component implements IViewBase {
+export class ViewBase<T extends ViewParamBase> extends Component implements IViewBase {
     /**首次应用字体 */
     protected firstApplyFont: boolean = true;
 
-    protected viewParam: ViewParamBase;
+    protected viewParam: T;
     start(): void {
 
     }
     /**首次初始化界面
      * (注意：该方法只会在加载后执行一次,可以把ui绑定写在此处)
      */
-    public async firstInitView(param?: ViewParamBase): Promise<boolean> {
+    public async firstInitView(param?: T): Promise<boolean> {
         return Promise.resolve(true);
     }
 
     /**预初始化 */
-    public async preInitView(param: ViewParamBase): Promise<boolean> {
+    public async preInitView(param: T): Promise<boolean> {
         return Promise.resolve(true);
 
     }
 
     /**预加载对应场景资源 */
-    public async preLoadSrc(viewName: string, param: ViewParamBase): Promise<boolean> {
+    public async preLoadSrc(viewName: string, param: T): Promise<boolean> {
         //读取界面资源预加载配置
         const json = GM.configManager.getConfig(ConfigType.Table_ViewLoadRes);
         if (!json || !json[viewName]) {
@@ -88,7 +88,7 @@ export class ViewBase extends Component implements IViewBase {
 
 
     /**在界面打开时触发 */
-    public onViewOpen(param: ViewParamBase) {
+    public onViewOpen(param: T) {
         this.viewParam = param;
 
         if (param && param.openCallBack) {
@@ -101,7 +101,7 @@ export class ViewBase extends Component implements IViewBase {
     };
 
     /**在界面关闭时触发 */
-    public onViewClose(param?: any) {
+    public onViewClose(param?: T) {
         if (this.viewParam && this.viewParam.closeCallBack) {
             this.viewParam.closeCallBack(param);
         }
@@ -230,5 +230,7 @@ export class ViewBase extends Component implements IViewBase {
             comp.font = font;
         })
     }
+
+    public 
 }
 

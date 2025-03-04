@@ -28,7 +28,7 @@ export default class PreLoadManager extends ManagerBase {
     ]
 
     /**预先加载界面 */
-    private _preloadView: Array<{ bundle: Enum_AssetBundle, viewName: UIName }> = [
+    private _preloadView: Array<{ bundle: Enum_AssetBundle, viewName: UIName | string }> = [
     ]
 
     init(...inf: unknown[]): boolean {

@@ -23,7 +23,7 @@ export class GameViewInf {
 const { ccclass, property } = _decorator;
 
 @ccclass
-export default abstract class GameViewBase extends ViewBase {
+export default abstract class GameViewBase<T extends GameViewBaseInitParam> extends ViewBase<T> {
     /**当前游戏状态 */
     protected gameState: Enum_GameState = Enum_GameState.None;
     /**游戏对象管理者 字典 */
@@ -46,14 +46,6 @@ export default abstract class GameViewBase extends ViewBase {
 
     /**游戏通关判断 */
     protected abstract isGamePass(): boolean;
-
-    /**游戏界面参数 */
-    protected viewParam: GameViewBaseInitParam;
-
-    public onViewOpen(param: GameViewBaseInitParam) {
-        this.viewParam = param;
-
-    }
 
     /**
      * 根据类型获取对象管理者
@@ -82,7 +74,7 @@ export default abstract class GameViewBase extends ViewBase {
             if (!obj) {
                 continue;
             }
-            
+
             let type = obj.type;
             if (!this.GameObjectsManagers.has(type)) {
                 continue;

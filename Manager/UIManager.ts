@@ -16,7 +16,7 @@ export class ViewData {
     load: boolean;
     layer: Enum_Layer;
 
-    viewBaseComp: ViewBase;
+    viewBaseComp: ViewBase<ViewParamBase>;
     assetBundle: Enum_AssetBundle;
     constructor(modName: string, assetBundle?: Enum_AssetBundle) {
         this.modName = modName;
@@ -152,7 +152,7 @@ export default class UIManager {
         return p;
     }
 
-    public async OpenUI(name: string, viewParam: ViewParamBase = null, module: Enum_AssetBundle = Enum_AssetBundle.Common, layer: Enum_Layer = Enum_Layer.UI, transtionParam?: ViewTranstionParam): Promise<ViewBase> {
+    public async OpenUI(name: string, viewParam: ViewParamBase = null, module: Enum_AssetBundle = Enum_AssetBundle.Common, layer: Enum_Layer = Enum_Layer.UI, transtionParam?: ViewTranstionParam): Promise<ViewBase<ViewParamBase>> {
         console.log("OpenUI ==>", "模块名:", module, "界面名:", name, "界面id:", name);
 
         let viewData = this.getViewData(name, module);
@@ -162,7 +162,7 @@ export default class UIManager {
             return Promise.resolve(null);
         }
 
-        let comp: ViewBase = viewData.viewBaseComp;
+        let comp: ViewBase<ViewParamBase> = viewData.viewBaseComp;
         if (viewData.show) {
             console.log("view:", name, " already exist !");
             return Promise.resolve(comp);
@@ -230,7 +230,7 @@ export default class UIManager {
         }
     }
 
-    public CloseUI(comp: ViewBase) {
+    public CloseUI(comp: ViewBase<ViewParamBase>) {
         for (let i = 0; i < this._ViewMap.length; i++) {
             const element = this._ViewMap[i];
             if (element.viewBaseComp == comp) {
@@ -247,7 +247,7 @@ export default class UIManager {
         }
     }
 
-    public GetUI(name: string): ViewBase {
+    public GetUI(name: string): ViewBase<ViewParamBase> {
         for (let i = 0; i < this._ViewMap.length; i++) {
             const element = this._ViewMap[i];
             if (element.modName == name) {
@@ -279,13 +279,17 @@ export default class UIManager {
     }
 
     /**销毁界面 （注意：是否真的需要销毁该界面） */
-    public DestoryUI(comp: ViewBase) {
+    public DestoryUI(comp: ViewBase<ViewParamBase>) {
         let idx = this._ViewMap.findIndex((value) => {
             return value.viewBaseComp == comp;
         })
 
-        let viewData = this._ViewMap.splice(idx, 1)[0];
+        let viewData = this._ViewMap[idx];
+        if (viewData.show) {
+            this.CloseUI(comp);
+        }
         viewData.node.destroy();
+        this._ViewMap.splice(idx, 1)[0];
     }
 
     /**销毁界面 （注意：是否真的需要销毁该界面） */
@@ -294,8 +298,12 @@ export default class UIManager {
             return value.modName == name;
         })
 
-        let viewData = this._ViewMap.splice(idx, 1)[0];
+        let viewData = this._ViewMap[idx];
+        if (viewData.show) {
+            this.CloseUIByName(name);
+        }
         viewData.node.destroy();
+        this._ViewMap.splice(idx, 1)[0];
     }
 
     /**

@@ -2,9 +2,17 @@ import { AssetManager, SpriteFrame, sys, Texture2D, SpriteAtlas, Asset, assetMan
 import { DEBUG } from "cc/env";
 import { Enum_AssetBundle, AtlasType } from "../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
+import { TEXTURE_DIR } from "../Def/ConstDef";
 
 class resourcesManager extends ManagerBase {
-    // ResData: { [key: string]: { [key: string]: any } } = {};
+    /**
+     * 加载一张贴图 （异步）
+     * @param BundleName 
+     * @param path 
+     * @param tex_name 
+     * @param atlasType 
+     * @returns 
+     */
     public async LoadSpriteFrameFromAtlas(BundleName: Enum_AssetBundle | string, path: string, tex_name: string, atlasType: AtlasType = AtlasType.default) {
         let p = new Promise<SpriteFrame>(async (resolve) => {
             if (sys.isBrowser && DEBUG) {
@@ -74,6 +82,31 @@ class resourcesManager extends ManagerBase {
 
         return p;
 
+    }
+
+    /**直接获取贴图资源 （注意：没加载的话，会返回空） */
+    public getSpriteFrameFromAtlas(BundleName: Enum_AssetBundle | string, tex_name: string, dirName: string = TEXTURE_DIR, atlasName: string = "") {
+        const bundle: AssetManager.Bundle = this.getAssetBundle(BundleName);
+        if (!bundle) {
+            return null;
+        }
+
+        let path = dirName ? `${dirName}/${atlasName}` : atlasName;
+
+        const atlas = bundle.get<SpriteAtlas>(path);
+        if (atlas) {
+            return atlas.getSpriteFrame(tex_name);
+        }
+
+        path = dirName ? `${dirName}/${tex_name}` : tex_name;
+        let tex = bundle.get<Texture2D>(path);
+        if (!tex) {
+            return null;
+        }
+
+        let sf = new SpriteFrame();
+        sf.texture = tex;;
+        return sf;
     }
 
     /**直接获取已经加载的资源 */
@@ -183,6 +216,8 @@ class resourcesManager extends ManagerBase {
      */
     public ReleaseAllAssetsInBundle(BundleName: Enum_AssetBundle | string) {
         if (this.isBundleLoadFinished(BundleName)) {
+            console.log("ReleaseAllAssetsInBundle -->", BundleName);
+
             const ab = assetManager.getBundle(BundleName);
             ab.releaseAll();
 
