@@ -145,7 +145,7 @@ export class ViewBase<T extends ViewParamBase> extends Component implements IVie
      * @param clearOldListener 是否清除旧的监听事件
      * @returns 
      */
-    protected bindBtnClickEvent(button: Node | Button, clickFuncName: string, target: Node, compName: string, customEventData: string = "", actionID: number = undefined, clearOldListener: boolean = false, btnClickSound?: AudioName) {
+    protected bindBtnClickEvent(button: Node | Button, clickFuncName: string, target?: Node, compName?: string, customEventData: string = "", actionID: number = undefined, clearOldListener: boolean = false, btnClickSound?: AudioName) {
         if (button == null) {
             console.error("bindBtnClickEvent error: null object ===>", this.node.name,);
             return;
@@ -162,6 +162,9 @@ export class ViewBase<T extends ViewParamBase> extends Component implements IVie
         else {
             curButton = button;
         }
+
+        target = target || this.node;
+        compName = compName || this.node.name;
 
         if (clearOldListener) {
             curButton.clickEvents = [];
@@ -230,7 +233,5 @@ export class ViewBase<T extends ViewParamBase> extends Component implements IVie
             comp.font = font;
         })
     }
-
-    public 
 }
 

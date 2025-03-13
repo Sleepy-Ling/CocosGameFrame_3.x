@@ -1,6 +1,4 @@
-import { Rect, Vec2, Vec3 } from "cc";
-import { IColliderInf } from "../../../Def/StructDef";
- 
+  
 export interface Rectangle {
     x: number;
     y: number;
@@ -75,20 +73,6 @@ export class CollisionUtil {
         }
 
         return result;
-    }
-
-    /**获取碰撞体的碰撞盒 */
-    static getColliderBox(colliderInf: IColliderInf) {
-        let worldPos = colliderInf.getWorldPosition();
-
-        let rect = {
-            x: worldPos.x - 0.5 * colliderInf.width,
-            y: worldPos.y - 0.5 * colliderInf.height,
-            width: colliderInf.width,
-            height: colliderInf.height,
-        }
-
-        return rect;
     }
 
     static circleVsRect(circle: Circle, rect: Rectangle): boolean {

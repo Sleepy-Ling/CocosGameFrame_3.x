@@ -4,6 +4,7 @@ import { AudioName } from '../../Def/EnumDef';
 import { GM } from '../Global/GM';
 import IViewBase from './IViewBase';
 import { ViewBase, ViewParamBase } from './ViewBase';
+import AnimCtrl from '../../Controller/AnimCtrl';
 const { ccclass, property, menu } = _decorator;
 
 export enum Enum_SwitchViewState {
@@ -15,18 +16,20 @@ export enum Enum_SwitchViewState {
 /**具有切换动画界面基类 */
 @ccclass()
 @menu("View/SwitchAnimViewBase")
-export class SwitchAnimViewBase extends ViewBase {
+export class SwitchAnimViewBase extends ViewBase<ViewParamBase> {
     protected anim: Animation;
     protected openViewAnimName: string = "OpenViewAnim";
     protected closeViewAnimName: string = "CloseViewAnim";
     protected switchState: Enum_SwitchViewState;
+    protected animCtrl: AnimCtrl;
 
     public firstInitView(param?: ViewParamBase): Promise<boolean> {
         if (!this.anim) {
             this.anim = this.getComponent(Animation);
-
-
         }
+
+        this.animCtrl = new AnimCtrl();
+        this.animCtrl.init(this.node);
 
         return super.firstInitView(param);
     }
@@ -35,9 +38,10 @@ export class SwitchAnimViewBase extends ViewBase {
         super.onViewOpen(param);
 
         if (this.anim) {
-            this.anim.targetOff(this);
-            this.anim.on(Animation.EventType.FINISHED, this._onSwitchAnimFinished, this);
-            this.anim.play(this.openViewAnimName);
+            // this.anim.targetOff(this);
+            // this.anim.on(Animation.EventType.FINISHED, this._onSwitchAnimFinished, this);
+            // this.anim.play(this.openViewAnimName);
+            this.animCtrl.playOnce(this.openViewAnimName, null, this._onSwitchAnimFinished.bind(this));
 
             this.switchState = Enum_SwitchViewState.Opening;
         }
@@ -46,12 +50,19 @@ export class SwitchAnimViewBase extends ViewBase {
 
     /**播过过渡动画后 */
     private _onSwitchAnimFinished(tag: string, animationState: AnimationState) {
-        if (animationState.name == this.openViewAnimName) {
+        if (animationState == null) {
+            if (this.switchState == Enum_SwitchViewState.Opening) {
+                this.onOpenFinish();
+            }
+            else if (this.switchState == Enum_SwitchViewState.Closing) {
+                this.onCloseFinish();
+            }
+        }
+        else if (animationState.name == this.openViewAnimName) {
             this.onOpenFinish();
 
         }
-
-        if (animationState.name == this.closeViewAnimName) {
+        else if (animationState.name == this.closeViewAnimName) {
             this.onCloseFinish();
         }
 
@@ -74,7 +85,8 @@ export class SwitchAnimViewBase extends ViewBase {
         this.switchState = Enum_SwitchViewState.Closing;
 
         if (this.anim) {
-            this.anim.play(this.closeViewAnimName);
+            // this.anim.play(this.closeViewAnimName);
+            this.animCtrl.playOnce(this.closeViewAnimName, null, this._onSwitchAnimFinished.bind(this));
         }
         else {
             this.onCloseFinish();

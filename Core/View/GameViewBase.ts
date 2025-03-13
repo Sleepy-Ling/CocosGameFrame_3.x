@@ -2,11 +2,13 @@
 
 
 import { _decorator, Canvas, Game, MathBase, Vec2 } from 'cc';
-import { Enum_GameState, Enum_GameObject } from '../../Def/EnumDef';
+import { Enum_GameState, Enum_GameObject, Enum_EventType } from '../../Def/EnumDef';
 import { GameObjectsManagerBase } from '../../Manager/GameObjectsManagerBase';
 
 import GameObjectBase, { GameObjectBaseInitParam } from '../GameObjects/GameObjectBase';
 import { ViewBase, ViewParamBase } from './ViewBase';
+import { CustomEvents } from '../../Event/CustomEvents';
+import { GM } from '../Global/GM';
 
 export class GameViewBaseInitParam extends ViewParamBase {
     public levelID: number = -1;
@@ -47,6 +49,21 @@ export default abstract class GameViewBase<T extends GameViewBaseInitParam> exte
     /**游戏通关判断 */
     protected abstract isGamePass(): boolean;
 
+
+    public onViewOpen(param: T): void {
+        super.onViewOpen(param);
+
+        const gameEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Game);
+        gameEventDispatcher.Listen(CustomEvents.RemoveObject, this.RemoveObjectFromManager, this);
+        gameEventDispatcher.Listen(CustomEvents.DelayRemoveObject, this.markNeedRecoverObject, this);
+    }
+
+    public onViewClose(param?: T): void {
+        super.onViewClose(param);
+
+        const gameEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Game);
+        gameEventDispatcher.OffAllListenOfTarget(this);
+    }
     /**
      * 根据类型获取对象管理者
      * @param type 

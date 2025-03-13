@@ -19,7 +19,7 @@ export class GameObjectsManagerBase extends ManagerBase {
 
     /**把游戏对象加入表里 */
     public AddGameObjectIntoTable(gameObjectBase: GameObjectBase, initInf: GameObjectBaseInitParam = null) {
-        let id = gameObjectBase.getUUID() || initInf.uuid;
+        let id = gameObjectBase.getUUID() || initInf.uuid || gameObjectBase.node.uuid;
         if (id == null) {
             LogUtil.Log("添加对象的uuid 为空!!");
             return;
@@ -31,6 +31,8 @@ export class GameObjectsManagerBase extends ManagerBase {
         }
 
         this.GameObjectsTable.set(id, gameObjectBase);
+
+        initInf.uuid = id;
 
         gameObjectBase.init(initInf);
 
@@ -64,13 +66,13 @@ export class GameObjectsManagerBase extends ManagerBase {
     public RemoveAllGameObjects() {
         const gameEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Game);
         let allObjects = this.GetAllGameObjects();
-        
+
         allObjects.forEach((obj) => {
             // obj.recover();
             ObjectPool.put(obj.recoverTag, obj);
 
             gameEventDispatcher.Emit(CustomEvents.onGameObjectRemovedFinish, obj);
-    
+
         })
 
         this.GameObjectsTable.clear();

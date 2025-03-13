@@ -25,7 +25,10 @@ export class CustomEvents {
     public static onGameObjectRemovedFinish = "onGameObjectRemovedFinish";
 
     /**移除游戏对象 (非即时移除) */
-    public static DelayRemoveObject = "RemoveObject";
+    public static DelayRemoveObject = "DelayRemoveObject";
+    /**移除游戏对象 (即时移除) */
+    public static RemoveObject = "RemoveObject";
+
     /*------------调试相关消息------------*/
     public static Debug_PassGame = "Debug_PassGame";
     public static Debug_SetPlayerHp = "Debug_SetPlayerHp";

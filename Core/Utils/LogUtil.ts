@@ -15,8 +15,24 @@ class _LogUtil {
     private _tag: string = "Log Util";
     Log(...param: any[]) {
         if (this.logLevel & Enum_LogLevel.Log) {
-            console.log.apply(console, [this._tag, ": ", ...param]);
+            // const stack = new Error().stack;
+            // if (stack) {
+            //     // 提取调用位置的相关信息
+            //     const stackLines = stack.split('\n');
+            //     const callerLine = stackLines[2]; // 通常第二行是调用者信息
+            //     const matchResult = callerLine.match(/at\s+(.*)\s+\((.*):(\d+):(\d+)\)/);
+            //     if (matchResult) {
+            //         const [_, functionName, filePath, line, column] = matchResult;
+            //         console.log.apply(console, [...param, `\n ${functionName}`]);
+            //     } else {
+            //         console.log(...param, ` ${callerLine.trim()}`);
+            //     }
 
+            // } else {
+            //     console.log.apply(console, [this._tag, ": ", ...param]);
+            // }
+
+            console.log.apply(console, [this._tag, ": ", ...param]);
         }
     }
 
@@ -32,6 +48,9 @@ class _LogUtil {
         }
     }
 
+    rightAlignString(str: string, totalLength: number, paddingChar = ' ') {
+        return str.padStart(totalLength, paddingChar);
+    }
 }
 
 export const LogUtil = new _LogUtil();

@@ -13,7 +13,7 @@ class resourcesManager extends ManagerBase {
      * @param atlasType 
      * @returns 
      */
-    public async LoadSpriteFrameFromAtlas(BundleName: Enum_AssetBundle | string, path: string, tex_name: string, atlasType: AtlasType = AtlasType.default) {
+    public async LoadSpriteFrameFromAtlas(BundleName: Enum_AssetBundle | string, path: string, tex_name: string, atlasType: AtlasType | string = AtlasType.default) {
         let p = new Promise<SpriteFrame>(async (resolve) => {
             if (sys.isBrowser && DEBUG) {
 
@@ -91,15 +91,22 @@ class resourcesManager extends ManagerBase {
             return null;
         }
 
-        let path = dirName ? `${dirName}/${atlasName}` : atlasName;
+        let curPath = dirName ? `${dirName}/${atlasName}` : atlasName;
 
-        const atlas = bundle.get<SpriteAtlas>(path);
-        if (atlas) {
+        let atlas = bundle.get<SpriteAtlas>(curPath, SpriteAtlas);
+        let inf = bundle.getInfoWithPath(curPath, SpriteAtlas);
+        let isAtlas: boolean = atlas instanceof SpriteAtlas;
+
+        // console.log("atlas", atlas, isAtlas);
+        // console.log("inf", inf, "path", curPath,);
+
+        if (atlas && isAtlas) {
             return atlas.getSpriteFrame(tex_name);
         }
 
-        path = dirName ? `${dirName}/${tex_name}` : tex_name;
-        let tex = bundle.get<Texture2D>(path);
+        curPath = dirName ? `${dirName}/${tex_name}` : tex_name;
+
+        let tex = bundle.get<Texture2D>(curPath);
         if (!tex) {
             return null;
         }
