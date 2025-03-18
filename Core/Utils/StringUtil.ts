@@ -5,6 +5,11 @@
  * @returns 
  */
 class _StringUtil {
+    /**
+     * 将时间输出成 分：秒 格式
+     * @param time 秒数
+     * @returns 
+     */
     public timeToStr(time: number) {
         let seconds = Math.floor(time % 60);
         let minute = Math.floor(time / 60);

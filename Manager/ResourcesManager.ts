@@ -1,4 +1,4 @@
-import { AssetManager, SpriteFrame, sys, Texture2D, SpriteAtlas, Asset, assetManager, ImageAsset, log } from "cc";
+import { AssetManager, SpriteFrame, sys, Texture2D, SpriteAtlas, Asset, assetManager, ImageAsset, log, path } from "cc";
 import { DEBUG } from "cc/env";
 import { Enum_AssetBundle, AtlasType } from "../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
@@ -106,13 +106,15 @@ class resourcesManager extends ManagerBase {
 
         curPath = dirName ? `${dirName}/${tex_name}` : tex_name;
 
-        let tex = bundle.get<Texture2D>(curPath);
-        if (!tex) {
+        curPath = path.join(curPath, "spriteFrame");
+
+        let sf = bundle.get<SpriteFrame>(curPath);
+        if (!sf) {
             return null;
         }
 
-        let sf = new SpriteFrame();
-        sf.texture = tex;;
+        // let sf = new SpriteFrame();
+        // sf.texture = sf;
         return sf;
     }
 

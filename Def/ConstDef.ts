@@ -24,6 +24,9 @@ export const TEXTURE_DIR: string = "Texture";
 export const VIEW_DIR: string = "View";
 /**ui小组件 目录 */
 export const UI_ITEM_DIR: string = "UI_Item";
+/**游戏item 目录 */
+export const GAME_ITEM_DIR: string = "Game_Item";
+
 /*========================目录 end============================== */
 
 
