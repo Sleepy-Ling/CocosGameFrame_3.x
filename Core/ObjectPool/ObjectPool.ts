@@ -1,9 +1,5 @@
 import { _decorator, Component, instantiate, Node, Prefab } from "cc";
-import { Enum_Layer } from "../../Def/EnumDef";
-import GameObjectBase from "../GameObjects/GameObjectBase";
 import IRecoverObject from "../GameObjects/IRecoverObject";
-import { GM } from "../Global/GM";
-import GameViewBase from "../View/GameViewBase";
 
 const { ccclass, property } = _decorator;
 

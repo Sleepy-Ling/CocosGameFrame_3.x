@@ -37,6 +37,7 @@ export class SwitchAnimViewBase extends ViewBase<ViewParamBase> {
     public onViewOpen(param: ViewParamBase): void {
         super.onViewOpen(param);
 
+        this.switchState = Enum_SwitchViewState.Normal;
         if (this.anim) {
             // this.anim.targetOff(this);
             // this.anim.on(Animation.EventType.FINISHED, this._onSwitchAnimFinished, this);
@@ -71,17 +72,21 @@ export class SwitchAnimViewBase extends ViewBase<ViewParamBase> {
     /**打开过渡动画播放完成 */
     protected onOpenFinish() {
         console.log("onOpenFinish", this.node.name);
-
+        this.switchState = Enum_SwitchViewState.Normal;
     }
 
     /**关闭过渡动画播放完成 */
     protected onCloseFinish() {
         console.log("onCloseFinish", this.node.name);
-
+        this.switchState = Enum_SwitchViewState.Normal;
         super.closeSelf();
     }
 
     protected onClickClose(): void {
+        if (this.switchState != Enum_SwitchViewState.Normal) {
+            return;
+        }
+
         this.switchState = Enum_SwitchViewState.Closing;
 
         if (this.anim) {
