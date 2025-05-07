@@ -1,12 +1,12 @@
 import { find, instantiate, Label, Node, Prefab, UITransform, v3, Vec3 } from "cc"
-import { GM } from "../Core/Global/GM"
 import { ObjectPool } from "../Core/ObjectPool/ObjectPool"
 import PopUpItemBase, { PopUpItemBaseParam } from "../Core/PopUp/PopUpItemBase"
 import { ViewBase, ViewParamBase, ViewTranstionParam } from "../Core/View/ViewBase"
 import { Frame_VERSION, IS_DEBUG, VIEW_DIR } from "../Def/ConstDef"
-import { UIName, Enum_AssetBundle, Enum_Layer, Enum_EventType } from "../Def/EnumDef"
+import { Enum_AssetBundle, Enum_Layer, Enum_Language } from "../Def/EnumDef"
 import { CustomEvents } from "../Event/CustomEvents"
 import { ResourcesManager } from "./ResourcesManager"
+import EventDispatcher from "../Event/EventDispatcher"
 
 
 export class ViewData {
@@ -29,6 +29,8 @@ export default class UIManager {
     private _ViewMap: ViewData[] = [];
     private _layerDict: { [key: number]: Node };
     private _layerOrder: { [key: number]: string[] };
+    private _eventDispatcher: EventDispatcher;
+    private _getLanguageCallback: () => Enum_Language;
 
     private getViewData(constModName: string, module?: Enum_AssetBundle): ViewData {
         for (let x = 0; x < this._ViewMap.length; x++) {
@@ -61,7 +63,7 @@ export default class UIManager {
         }
     }
 
-    public init(parentNode: Node) {
+    public init(parentNode: Node, eventDispatcher: EventDispatcher, getLanguageCallback: () => Enum_Language) {
         this._layerDict = {};
         this._layerOrder = {};
 
@@ -100,6 +102,8 @@ export default class UIManager {
             }
         }
 
+        this._eventDispatcher = eventDispatcher;
+        this._getLanguageCallback = getLanguageCallback;
     }
 
     public showVer() {
@@ -139,7 +143,7 @@ export default class UIManager {
                 })
             })
             layerNode.addChild(viewData.node);
-            layerNode.setSiblingIndex(zIndex);
+            viewData.node.setSiblingIndex(zIndex);
         }
         else {
             p = Promise.resolve(true);
@@ -206,10 +210,11 @@ export default class UIManager {
 
         comp.onViewOpen(viewParam);
 
-        comp.onChangeLanguage(GM.gameDataManager.getLanguage());
+        if (this._getLanguageCallback) {
+            comp.onChangeLanguage(this._getLanguageCallback());
+        }
 
-        const uiEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
-
+        const uiEventDispatcher = this._eventDispatcher;
         uiEventDispatcher.Emit(CustomEvents.OnViewOpen, name, comp);
 
         return Promise.resolve(comp);

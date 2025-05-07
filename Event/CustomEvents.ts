@@ -11,6 +11,11 @@ export class CustomEvents {
     public static GameHideInBackground = "GameHideInBackground";
 
     public static LoadingProgress = "LoadingProgress";
+    /*------------红点系统相关消息------------*/
+    public static RedDotEvent = "RedDotEvent";
+    /*------------新手指引相关消息------------*/
+    public static FinishGuide = "FinishGuide";
+    public static OnGuideActionChange = "OnGuideActionChange";
     /*------------碰撞相关消息------------*/
     public static CollisonEvent = "CollisonEvent";
 

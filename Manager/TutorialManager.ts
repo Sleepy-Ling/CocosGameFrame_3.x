@@ -1,11 +1,11 @@
 import ManagerBase from "./ManagerBase";
 
 import { CustomEvents } from "../Event/CustomEvents";
-import { GM } from "../Core/Global/GM";
-import { Enum_AssetBundle, Enum_EventType, UIName } from "../Def/EnumDef";
-import { ViewBase } from "../Core/View/ViewBase";
-import { PlayerData } from "../Data/PlayerData";
+import { Enum_AssetBundle, UIName } from "../Def/EnumDef";
+import { ViewBase, ViewParamBase } from "../Core/View/ViewBase";
 import { Vec2, Size, Mask, Label, find, v2, size, Tween, v3, Node, EventTouch, __private, tween, UITransform } from "cc";
+import EventDispatcher from "../Event/EventDispatcher";
+import UIManager from "./UIManager";
 
 export type TutorialCallback = (err, result) => void;
 
@@ -48,7 +48,7 @@ export interface TutorialTask {
     /**模块名 */
     bundleName?: string;
     /**目标界面 */
-    targetView?: UIName;
+    targetView?: string;
     /**目标点击按钮路径 */
     targetBtnPath?: string;
     /**响应的事件id */
@@ -70,13 +70,19 @@ export class TutorialManager extends ManagerBase {
 
     protected tasksList: TutorialTask[];
 
-    public init(layer: Node): boolean {
+    private _uiEventDispatcher: EventDispatcher;
+    private _guideEventDispatcher: EventDispatcher;
+    private _uiManager: UIManager;
+
+    public init(layer: Node, uiEventDispatcher: EventDispatcher, guideEventDispatcher: EventDispatcher, uiManager: UIManager): boolean {
         this.layer = layer;
 
         this._mask = find("mask", this.layer)?.getComponent(Mask);
         this.lab_tips = find("node_tips", this.layer)?.getComponentInChildren(Label);
         this.node_hand = find("node_hand", this.layer);
-
+        this._uiEventDispatcher = uiEventDispatcher;
+        this._guideEventDispatcher = guideEventDispatcher;
+        this._uiManager = uiManager;
 
         return true;
     }
@@ -156,13 +162,10 @@ export class TutorialManager extends ManagerBase {
         this.layer.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.layer.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.layer.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
-        let eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Guide);
+        let eventDispatcher = this._guideEventDispatcher;
         eventDispatcher.Listen(CustomEvents.FinishGuide, this.onFinishGuide, this);
         //监听action 事件
         eventDispatcher.Listen(CustomEvents.OnGuideActionChange, this.onActionChange, this);
-
-        // eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
-        // eventDispatcher.Listen(CustomEvents.OnViewOpen, this.onViewOpen, this);
 
         this.refreshGuide(idx);
     }
@@ -183,13 +186,13 @@ export class TutorialManager extends ManagerBase {
     }
 
     /**监听界面打开事件 (监听响应的按钮）*/
-    protected onViewOpen(id: UIName, comp: ViewBase) {
+    protected onViewOpen(id: UIName, comp: ViewBase<ViewParamBase>) {
         console.log("监听界面打开事件", id);
 
         if (this.curTask && this.curTask.targetView != null && this.curTask.targetView == id) {
 
 
-            let eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
+            let eventDispatcher = this._uiEventDispatcher;
             eventDispatcher.OffListen(CustomEvents.OnViewOpen, this.onViewOpen, this);
 
             console.log("取消 监听 ==>", this.curTaskIdx, this.curTask.targetView, this.curTask.targetBtnPath);
@@ -248,16 +251,16 @@ export class TutorialManager extends ManagerBase {
 
         this.curTaskIdx = idx;
         this.curTask = this.tasksList[idx];
-        if (this.curTask == null || PlayerData.isDebugPassPlayerTutorial) {
+        if (this.curTask == null) {
             this.lab_tips.node.parent.active = false
             this._mask.node.active = false;
             this.node_hand.active = false;
             this.layer.targetOff(this);
 
-            let eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Guide);
+            let eventDispatcher = this._guideEventDispatcher;
             eventDispatcher.OffAllListenOfTarget(this);
 
-            eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
+            eventDispatcher = this._uiEventDispatcher;
             eventDispatcher.OffAllListenOfTarget(this);
 
             this.curTaskIdx = null;
@@ -269,9 +272,9 @@ export class TutorialManager extends ManagerBase {
 
         if (this.curTask.targetBtnPath) {//当前需要监听指定点击按钮
             //目标的界面是否已经打开了
-            let isShowingView = GM.uiManager.GetUIIsShowing(this.curTask.targetView);
+            let isShowingView = this._uiManager.GetUIIsShowing(this.curTask.targetView);
 
-            let comp = GM.uiManager.GetUI(this.curTask.targetView);
+            let comp = this._uiManager.GetUI(this.curTask.targetView);
 
             if (isShowingView) {
                 let btnNode = find(this.curTask.targetBtnPath, comp.node);
@@ -289,18 +292,14 @@ export class TutorialManager extends ManagerBase {
             else {//目标的界面还没打开，则监听它的打开事件，然后再监听指定按钮点击事件
                 console.log("监听 ==>", idx, this.curTask.targetView, this.curTask.targetBtnPath);
 
-                let eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
+                let eventDispatcher = this._uiEventDispatcher;
                 eventDispatcher.Listen(CustomEvents.OnViewOpen, this.onViewOpen, this);
             }
         }
 
         if (this.curTask.isForceOpenView) {
-            GM.uiManager.OpenUI(this.curTask.targetView, null, this.curTask.bundleName as Enum_AssetBundle);
+            this._uiManager.OpenUI(this.curTask.targetView, null, this.curTask.bundleName as Enum_AssetBundle);
         }
-
-        // if (this.curTask.targetView) {
-        //     GM.uiManager.OpenUI(this.curTask.targetView, null, this.curTask.bundleName as Enum_AssetBundle);
-        // }
 
         this._mask.node.active = this.curTask.showMask;
         const uiTransform = this._mask.getComponent(UITransform);
@@ -384,7 +383,7 @@ export class TutorialManager extends ManagerBase {
             this._mask.node.active = false;
         }
 
-        let eventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.Guide);
+        let eventDispatcher = this._guideEventDispatcher;
         eventDispatcher.OffAllListenOfTarget(this);
     }
 

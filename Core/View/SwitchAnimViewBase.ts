@@ -1,8 +1,5 @@
 
 import { Animation, AnimationState, _decorator } from 'cc';
-import { AudioName } from '../../Def/EnumDef';
-import { GM } from '../Global/GM';
-import IViewBase from './IViewBase';
 import { ViewBase, ViewParamBase } from './ViewBase';
 const { ccclass, property, menu } = _decorator;
 
@@ -12,16 +9,20 @@ export enum Enum_SwitchViewState {
     Closing,
 }
 
+export class SwitchAnimViewInitParam extends ViewParamBase {
+
+}
+
 /**具有切换动画界面基类 */
 @ccclass()
 @menu("View/SwitchAnimViewBase")
-export class SwitchAnimViewBase extends ViewBase {
+export class SwitchAnimViewBase<T extends SwitchAnimViewInitParam> extends ViewBase<T> {
     protected anim: Animation;
     protected openViewAnimName: string = "OpenViewAnim";
     protected closeViewAnimName: string = "CloseViewAnim";
     protected switchState: Enum_SwitchViewState;
 
-    public firstInitView(param?: ViewParamBase): Promise<boolean> {
+    public firstInitView(param?: T): Promise<boolean> {
         if (!this.anim) {
             this.anim = this.getComponent(Animation);
 
@@ -31,7 +32,7 @@ export class SwitchAnimViewBase extends ViewBase {
         return super.firstInitView(param);
     }
 
-    public onViewOpen(param: ViewParamBase): void {
+    public onViewOpen(param: T): void {
         super.onViewOpen(param);
 
         if (this.anim) {

@@ -2,7 +2,7 @@
 /**管理者基类 */
 export default abstract class ManagerBase {
     /**管理器初始化 */
-    public init(inf?: unknown): any {
+    public init(...inf: unknown[]): any {
 
         return true;
     }

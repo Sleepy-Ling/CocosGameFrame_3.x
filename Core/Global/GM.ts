@@ -15,7 +15,7 @@ import Ad_Manager from "../../Manager/Ad_Manager";
 import { Camera, Graphics, Node } from "cc";
 import ControllerBase from "../../Controller/ControllerBase";
 import { ResourcesManager } from "../../Manager/ResourcesManager";
-import { Enum_AssetBundle } from "../../Def/EnumDef";
+import { Enum_AssetBundle, Enum_EventType } from "../../Def/EnumDef";
 import { RedDotSystem } from "../RedDot/RedDotSystem";
 import { IGameLogic } from "./IGameLogic";
 import { CollisionManager } from "../../Manager/CollisionManager";
@@ -73,13 +73,16 @@ export namespace GM {
 
     /**初始化 */
     export async function init(p: IInitParam) {
-        uiManager.init(p.root_ui);
-        cameraManager.init(p.uiCamera, p.gameCamera, p.forwardCamera);
         gameDataManager.init(p.now);
+        eventDispatcherManager.init();
+
+        const uiEventDispatcher = eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
+        const getLanguageCallback = gameDataManager.getLanguage;
+        uiManager.init(p.root_ui, uiEventDispatcher, getLanguageCallback);
+        cameraManager.init(p.uiCamera, p.gameCamera, p.forwardCamera);
 
         preLoadManager.init();
         configManager.init();
-        eventDispatcherManager.init();
         rewardDistributeManager.init();
         audioManager.init(p.audioSourceRoot);
         timeStampManager.init();
