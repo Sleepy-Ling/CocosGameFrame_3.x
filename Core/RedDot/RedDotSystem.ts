@@ -1,7 +1,7 @@
 import { instantiate, Node, NodePool, Size, Sprite, SpriteFrame, UITransform } from "cc";
 import { Enum_EventType } from "../../Def/EnumDef";
 import { CustomEvents } from "../../Event/CustomEvents";
-import { GM } from "../Global/GM";
+import { GM } from "../../Global/GM";
 
 
 

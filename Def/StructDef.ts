@@ -76,3 +76,9 @@ export interface ICustomCollsionEvent {
     exitEvent: ICollsionDetail[];
 }
 
+/**spine动画数据 */
+export interface ISkeletonAnimationData {
+    name: string;
+    duration: number;
+}
+

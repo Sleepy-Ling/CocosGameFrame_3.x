@@ -1,5 +1,6 @@
 import { Animation, Node, sp } from "cc";
-import { ISkeletonAnimationData } from "../../Def/StructDef";
+import { ISkeletonAnimationData } from "../Def/StructDef";
+ 
 
 export default class AnimCtrl {
     protected anim: Animation;

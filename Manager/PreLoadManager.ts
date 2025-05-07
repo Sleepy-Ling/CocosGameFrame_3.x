@@ -6,7 +6,7 @@ import EventDispatcher from "../Event/EventDispatcher";
 import ConfigManager from "./ConfigManager";
 import ManagerBase from "./ManagerBase";
 import { ResourcesManager } from "./ResourcesManager";
-import { GM } from "../Core/Global/GM";
+import { GM } from "../Global/GM";
 
 /**预加载管理者/首次加载管理者 */
 export default class PreLoadManager extends ManagerBase {

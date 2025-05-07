@@ -1,8 +1,7 @@
 
 import { Vec2 } from "cc";
 import { MathUtil } from "./MathUtil";
-import { IStats } from "../../../Def/StructDef";
-
+ 
 class _CalcUtil {
     /**解析 cc.Component.EventHandler emit 参数 */
     public analyzeParam(param: string) {

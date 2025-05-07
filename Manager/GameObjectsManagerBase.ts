@@ -2,7 +2,7 @@
 import { Enum_EventType } from "../Def/EnumDef";
 import { CustomEvents } from "../Event/CustomEvents";
 import GameObjectBase, { GameObjectBaseInitParam } from "../Core/GameObjects/GameObjectBase";
-import { GM } from "../Core/Global/GM";
+import { GM } from "../Global/GM";
 import { ObjectPool } from "../Core/ObjectPool/ObjectPool";
 import { LogUtil } from "../Core/Utils/LogUtil";
 import ManagerBase from "./ManagerBase";
@@ -111,6 +111,10 @@ export class GameObjectsManagerBase extends ManagerBase {
         this.GetAllGameObjects().forEach((obj) => {
             obj.onGameEnd();
         })
+    }
+
+    public getObjectsCnt() {
+        return this.GameObjectsTable.size;
     }
 }
 

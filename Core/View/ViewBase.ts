@@ -1,7 +1,7 @@
 import { Button, Component, EventTouch, Label, Node, RichText, TTFFont, Vec2, _decorator } from 'cc';
 import { AudioName, ConfigType, Enum_AssetBundle, Enum_Language, Enum_Orientation } from '../../Def/EnumDef';
 
-import { GM } from '../Global/GM';
+import { GM } from '../../Global/GM';
 
 import IViewBase from './IViewBase';
 import { ResourcesManager } from '../../Manager/ResourcesManager';
