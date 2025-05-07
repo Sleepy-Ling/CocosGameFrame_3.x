@@ -1,8 +1,6 @@
 
 import { Animation, AnimationState, _decorator } from 'cc';
-import { AudioName } from '../../Def/EnumDef';
-import { GM } from '../Global/GM';
-import IViewBase from './IViewBase';
+ 
 import { ViewBase, ViewParamBase } from './ViewBase';
 import AnimCtrl from '../../Controller/AnimCtrl';
 const { ccclass, property, menu } = _decorator;

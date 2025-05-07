@@ -8,7 +8,8 @@ import { GameObjectsManagerBase } from '../../Manager/GameObjectsManagerBase';
 import GameObjectBase, { GameObjectBaseInitParam } from '../GameObjects/GameObjectBase';
 import { ViewBase, ViewParamBase } from './ViewBase';
 import { CustomEvents } from '../../Event/CustomEvents';
-import { GM } from '../Global/GM';
+import { GM } from '../../Global/GM';
+ 
 
 export class GameViewBaseInitParam extends ViewParamBase {
     public levelID: number = -1;

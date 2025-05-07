@@ -59,11 +59,20 @@ export default class GameDataManagerBase extends ManagerBase {
 
         console.log("now zero ", date.getTime());
 
+        let nowZeroMTime = date.getTime();
+
         if (this.userData.lastLoginMTime == 0) {
             this.isFirstPlay = true;
+            this.userData.lastLoginMTime = nowZeroMTime;
         }
-        this.userData.lastLoginMTime = date.getTime();
 
+        if (this.userData.firstLoginMTime == 0) {
+            this.userData.firstLoginMTime = nowZeroMTime;
+        }
+
+        if (this.userData.firstLoginMTime == this.userData.lastLoginMTime) {
+            this.isNewPlayer = true;
+        }
         return;
     }
 
@@ -94,10 +103,24 @@ export default class GameDataManagerBase extends ManagerBase {
 
     }
 
-    public dailyCheck(mTime: number) {
+    /**检测当天是否为新的一天 */
+    public dailyCheck() {
         console.log("dailyCheck");
-    }
+        let isNewDay: boolean = false;
 
+        let date = new Date();
+        date.setHours(0, 0, 0, 0);
+
+        console.log("now zero ", date.getTime());
+        let nowZeroMTime = date.getTime();
+        let lastLoginMTime = this.userData.lastLoginMTime;
+        if (nowZeroMTime > lastLoginMTime) {
+            isNewDay = true;
+            this.userData.lastLoginMTime = nowZeroMTime;
+        }
+
+        return isNewDay;
+    }
 
     /**
      *  管理器每帧tick 函数
@@ -138,7 +161,7 @@ export default class GameDataManagerBase extends ManagerBase {
 
     /**每分钟更新 */
     public updateInEachMinute(mTime: number) {
-        this.dailyCheck(mTime);
+        this.dailyCheck();
     }
 
     /**

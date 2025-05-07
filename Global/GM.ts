@@ -3,23 +3,18 @@ import AudioManagerBase from "../Manager/AudioManagerBase";
 import CameraManager from "../Manager/CameraManager";
 import ConfigManager from "../Manager/ConfigManager";
 import EventDispatcherManager from "../Manager/EventDispatcherManager";
-import GameDataManager from "../Manager/GameDataManager";
 import { TimeStampManager } from "../Manager/TimeStampManager";
 import PreLoadManager from "../Manager/PreLoadManager";
 import { RewardDistributeManager } from "../Manager/RewardDistributeManager";
 import TimerManager from "../Manager/TimerManager";
 import ToastManager from "../Manager/ToastManager";
-import { TutorialManager } from "../Manager/TutorialManager";
 import UIManager from "../Manager/UIManager";
 import Ad_Manager from "../Manager/Ad_Manager";
 import { Camera, Graphics, Node } from "cc";
-import ControllerBase from "../Controller/ControllerBase";
-import { ResourcesManager } from "../Manager/ResourcesManager";
-import { Enum_AssetBundle, Enum_EventType } from "../Def/EnumDef";
-import { RedDotSystem } from "../Core/RedDot/RedDotSystem";
-import { IGameLogic } from "./IGameLogic";
+import { Enum_EventType } from "../Def/EnumDef";
 import { CollisionManager } from "../Manager/CollisionManager";
 import { Debug_Collision_Visible } from "../Def/ConstDef";
+import GameDataManagerBase from "../Manager/GameDataManagerBase";
 
 /**
  * 游戏主管 GameMaster
@@ -32,7 +27,7 @@ export namespace GM {
     /**摄像机管理者 */
     export const cameraManager: CameraManager = new CameraManager();
     /**游戏数据管理者 */
-    export const gameDataManager: GameDataManager = new GameDataManager();
+    export const gameDataManager: GameDataManagerBase = new GameDataManagerBase();
     /**音频管理者 */
     export const audioManager: AudioManagerBase = initAudioManager();
     /**配置管理者 */
