@@ -1,4 +1,4 @@
-import { AssetManager, SpriteFrame, sys, Texture2D, SpriteAtlas, Asset, assetManager, ImageAsset, log } from "cc";
+import { AssetManager, SpriteFrame, sys, Texture2D, SpriteAtlas, Asset, assetManager, ImageAsset, log, path } from "cc";
 import { DEBUG } from "cc/env";
 import { Enum_AssetBundle, AtlasType } from "../Def/EnumDef";
 import ManagerBase from "./ManagerBase";
@@ -13,7 +13,7 @@ class resourcesManager extends ManagerBase {
      * @param atlasType 
      * @returns 
      */
-    public async LoadSpriteFrameFromAtlas(BundleName: Enum_AssetBundle | string, path: string, tex_name: string, atlasType: AtlasType = AtlasType.default) {
+    public async LoadSpriteFrameFromAtlas(BundleName: Enum_AssetBundle | string, path: string, tex_name: string, atlasType: AtlasType | string = AtlasType.default) {
         let p = new Promise<SpriteFrame>(async (resolve) => {
             if (sys.isBrowser && DEBUG) {
 
@@ -91,21 +91,30 @@ class resourcesManager extends ManagerBase {
             return null;
         }
 
-        let path = dirName ? `${dirName}/${atlasName}` : atlasName;
+        let curPath = dirName ? `${dirName}/${atlasName}` : atlasName;
 
-        const atlas = bundle.get<SpriteAtlas>(path);
-        if (atlas) {
+        let atlas = bundle.get<SpriteAtlas>(curPath, SpriteAtlas);
+        let inf = bundle.getInfoWithPath(curPath, SpriteAtlas);
+        let isAtlas: boolean = atlas instanceof SpriteAtlas;
+
+        // console.log("atlas", atlas, isAtlas);
+        // console.log("inf", inf, "path", curPath,);
+
+        if (atlas && isAtlas) {
             return atlas.getSpriteFrame(tex_name);
         }
 
-        path = dirName ? `${dirName}/${tex_name}` : tex_name;
-        let tex = bundle.get<Texture2D>(path);
-        if (!tex) {
+        curPath = dirName ? `${dirName}/${tex_name}` : tex_name;
+
+        curPath = path.join(curPath, "spriteFrame");
+
+        let sf = bundle.get<SpriteFrame>(curPath);
+        if (!sf) {
             return null;
         }
 
-        let sf = new SpriteFrame();
-        sf.texture = tex;;
+        // let sf = new SpriteFrame();
+        // sf.texture = sf;
         return sf;
     }
 

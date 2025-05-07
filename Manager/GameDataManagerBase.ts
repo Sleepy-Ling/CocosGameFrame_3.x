@@ -15,7 +15,7 @@ const SaveDataHandler = {
     set(target: SaveData, property, value, receiver) {
         console.log(`设置${target.name}的${property}属性为${value}`);
         target[property] = value;
-        
+
         if (property == "isDirty") {
             return true;
         }
@@ -29,7 +29,7 @@ const SaveDataHandler = {
  * 游戏数据管理者
  * @description 尽量使用该管理器进行对GameData数据的修改
  */
-export default class GameDataManager extends ManagerBase {
+export default class GameDataManagerBase extends ManagerBase {
     isNewPlayer: boolean = false;
     isFirstPlay: boolean = false;
 
@@ -41,13 +41,16 @@ export default class GameDataManager extends ManagerBase {
     protected oneSecondTimer: number = 0;
     init(mTime: number) {
         this.allData = [];
-        this.userData.GetData();
-        this.settingData.GetData();
+        // this.userData.GetData();
+        // this.settingData.GetData();
 
-        this.userData = new Proxy<UserData>(this.userData, SaveDataHandler);
-        this.settingData = new Proxy<SettingData>(this.settingData, SaveDataHandler);
+        // this.userData = new Proxy<UserData>(this.userData, SaveDataHandler);
+        // this.settingData = new Proxy<SettingData>(this.settingData, SaveDataHandler);
 
-        this.allData.push(this.userData, this.settingData);
+        // this.allData.push(this.userData, this.settingData);
+
+        this.registData(this.userData);
+        this.registData(this.settingData);
 
         console.log("game data init :", mTime);
 
@@ -56,9 +59,31 @@ export default class GameDataManager extends ManagerBase {
 
         console.log("now zero ", date.getTime());
 
+        if (this.userData.lastLoginMTime == 0) {
+            this.isFirstPlay = true;
+        }
         this.userData.lastLoginMTime = date.getTime();
 
         return;
+    }
+
+    registData<T extends SaveData>(data: T) {
+        let hasRegist = this.allData.some((v) => {
+            return v == data || v.name == data.name;
+        })
+
+        if (hasRegist) {
+            console.error("重复注册");
+            return;
+        }
+
+        data.GetData();
+
+        let result: T = new Proxy<T>(data, SaveDataHandler);
+        this.allData.push(result);
+
+        console.log("registData success", data.name);
+        return result;
     }
 
     /**在配置表都加载完后初始化 */
@@ -83,6 +108,8 @@ export default class GameDataManager extends ManagerBase {
         this.oneSecondTimer += deltaTime;
         if (this.oneSecondTimer > GAMEDATA_TICK_INTERVAL) {
             this.oneSecondTimer -= GAMEDATA_TICK_INTERVAL;
+
+            this.updateInEachSecond();
             this.saveData();
         }
     }

@@ -18,7 +18,7 @@ export interface IGameObjectBase {
 }
 
 export class GameObjectBaseInitParam {
-    uuid: string;
+    uuid?: string;
 }
 
 /**游戏对象类 */
@@ -50,11 +50,11 @@ export default class GameObjectBase extends Component implements IRecoverObject,
         return true;
     }
 
-    protected _type: Enum_GameObject;
-    public get type(): Enum_GameObject {
+    protected _type: Enum_GameObject | number;
+    public get type(): Enum_GameObject | number {
         return this._type;
     }
-    public set type(v: Enum_GameObject) {
+    public set type(v: Enum_GameObject | number) {
         this._type = v;
     }
 

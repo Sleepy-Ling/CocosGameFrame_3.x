@@ -1,6 +1,6 @@
-import { Animation, Node, sp } from "cc";
+import { Animation, AnimationState, Node, sp } from "cc";
 import { ISkeletonAnimationData } from "../Def/StructDef";
- 
+
 
 export default class AnimCtrl {
     protected anim: Animation;
@@ -64,11 +64,11 @@ export default class AnimCtrl {
 
                 if (callback) {
                     // console.log("start play  ");
-                    this.anim.once(Animation.EventType.FINISHED, () => {
+                    this.anim.once(Animation.EventType.FINISHED, (tag: string, animationState: AnimationState) => {
                         if (callback) {
                             // console.log("do callback");
 
-                            callback();
+                            callback(tag, animationState);
                         }
 
                     }, this);

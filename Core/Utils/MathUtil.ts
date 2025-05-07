@@ -70,6 +70,16 @@ class _MathUtil {
         return result;
     }
 
+    shuffleArray<T>(arr: Array<T>) {
+        let tempArr: Array<T> = Array.from(arr);
+        for (let i = 0; i < tempArr.length; i++) {
+            let element = this.randomElementFromArrayAndRemove(tempArr);
+            tempArr.push(element);
+        }
+
+        return tempArr;
+    }
+
     /**
      * 获取反射角
      * @param v1 入射向量

@@ -20,4 +20,8 @@ export default class ConfigManager extends ManagerBase {
         const jsonAsset = ResourcesManager.getAssetRes<JsonAsset>(assetBundle, cfgName);
         return jsonAsset ? jsonAsset.json : null;
     }
+    public getConfigIDList(cfgName: string, assetBundle: Enum_AssetBundle = Enum_AssetBundle.Config) {
+        const table = this.getConfig(cfgName, assetBundle);
+        return Object.keys(table);
+    }
 }
