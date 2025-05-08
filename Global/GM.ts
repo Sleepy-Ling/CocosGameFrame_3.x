@@ -72,7 +72,7 @@ export namespace GM {
         eventDispatcherManager.init();
 
         const uiEventDispatcher = eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
-        const getLanguageCallback = gameDataManager.getLanguage;
+        const getLanguageCallback = gameDataManager.getLanguage.bind(gameDataManager);
         uiManager.init(p.root_ui, uiEventDispatcher, getLanguageCallback);
         cameraManager.init(p.uiCamera, p.gameCamera, p.forwardCamera);
 

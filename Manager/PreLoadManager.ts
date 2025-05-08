@@ -21,26 +21,26 @@ export default class PreLoadManager extends ManagerBase {
 
     }
 
-    /**预先加载分包 */
-    private _PreloadBundle: Enum_AssetBundle[] = [
-        Enum_AssetBundle.Common,
-        Enum_AssetBundle.Config,
-    ]
+    // /**预先加载分包 */
+    // private _PreloadBundle: Enum_AssetBundle[] = [
+    //     Enum_AssetBundle.Common,
+    //     Enum_AssetBundle.Config,
+    // ]
 
-    /**预先加载界面 */
-    private _preloadView: Array<{ bundle: Enum_AssetBundle, viewName: UIName | string }> = [
-    ]
+    // /**预先加载界面 */
+    // private _preloadView: Array<{ bundle: Enum_AssetBundle, viewName: UIName | string }> = [
+    // ]
 
     init(...inf: unknown[]): boolean {
         this._curLoadCount = 0;
 
-        assetManager.parser.register('.json', this.parseJson);
+        assetManager.parser.register({ '.json': this.parseJson });
 
         return super.init(inf);
     }
 
     /**开始加载 */
-    async BeginLoad(uiEventDispatcher: EventDispatcher, configManager: ConfigManager): Promise<void> {
+    async BeginLoad(uiEventDispatcher: EventDispatcher, bundlesName: string[] = [], viewsNameMap: { bundle: Enum_AssetBundle, viewName: UIName | string }[] = []): Promise<void> {
         await GM.uiManager.OpenUI(UIName.LoadingView, null, null, Enum_Layer.Loading);
 
         // const uiEventDispatcher = GM.eventDispatcherManager.getEventDispatcher(Enum_EventType.UI);
@@ -50,8 +50,8 @@ export default class PreLoadManager extends ManagerBase {
         this._loadTotal = 0;
 
         let assetNameList: Array<{ bundle: string, name: string }> = [];
-        for (let i = 0; i < this._PreloadBundle.length; i++) {
-            const element = this._PreloadBundle[i];
+        for (let i = 0; i < bundlesName.length; i++) {
+            const element = bundlesName[i];
 
             let p = ResourcesManager.LoadAssetBundle(element).then((bundle) => {
                 console.log("finish loading bundle", bundle.name);
@@ -72,7 +72,7 @@ export default class PreLoadManager extends ManagerBase {
         promiseList = [];
 
 
-        this._loadTotal += assetNameList.length;
+        this._loadTotal += assetNameList.length + viewsNameMap.length;
 
         for (const obj of assetNameList) {
             let pp = ResourcesManager.LoadAssetRes(obj.bundle, obj.name);
@@ -83,7 +83,8 @@ export default class PreLoadManager extends ManagerBase {
             promiseList.push(pp);
         }
 
-        for (const inf of this._preloadView) {
+
+        for (const inf of viewsNameMap) {
             let path: string = `${VIEW_DIR}/${inf.viewName}`;
 
             let pp = ResourcesManager.LoadAssetRes(inf.bundle, path);
@@ -104,7 +105,7 @@ export default class PreLoadManager extends ManagerBase {
 
     parseJson(file, options, callback) {
         // 解析下载完成的文件
-        console.log("file", file);
+        console.log("parseJson file", file);
 
         callback(null, file);
     }
